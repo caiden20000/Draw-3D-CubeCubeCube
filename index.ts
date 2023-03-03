@@ -5,6 +5,10 @@ import './style.css';
 const appDiv: HTMLElement = document.getElementById('app');
 appDiv.innerHTML = `<h1>Typescript template</h1>`;
 
+// Below code created
+// by C. Wiley
+// 03/2023
+
 // // // // // Splash Text // // // // //
 
 // Returns random int in range [min, max] inclusive

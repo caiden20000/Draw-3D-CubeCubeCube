@@ -772,8 +772,12 @@ class Canvas {
   public ctx: CanvasRenderingContext2D;
   public screen: Frustum;
   public backgroundColor: Color = new Color(0, 0, 0);
-  constructor(public canvasElement: HTMLCanvasElement, public width: number, public height: number, public fov: Angle = Angle.fromDegrees(90)) {
-    this.screen = new Frustum(width, height, fov, fov);
+  public width;
+  public height;
+  constructor(public canvasElement: HTMLCanvasElement, public fov: Angle = Angle.fromDegrees(90)) {
+    this.width = canvasElement.width;
+    this.height = canvasElement.height;
+    this.screen = new Frustum(this.width, this.height, fov, fov);
     this.ctx = canvasElement.getContext('2d');
     // Set origin in center
     this.ctx.translate(this.screen.xDom, this.screen.yDom);
@@ -856,7 +860,7 @@ class RenderQueue {
 }
 
 // Test driving code
-let canvas = new Canvas(canvasElement, canvasWidth, canvasHeight, Angle.fromDegrees(45));
+let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
 canvas.setBackgroundColor(new Color(0, 0, 0));
 
 let q = new Square(new Point(75, 75, 200), 100);

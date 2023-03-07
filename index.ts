@@ -85,7 +85,10 @@ interface Drawable {
 }
 
 interface Positional {
+  translate(Vector);
   getPos(): Point;
+  rotate(Point, Axis, Angle);
+  //getRot(Axis): Angle; // TODO
 }
 
 type Renderable = Drawable & Positional;
@@ -326,6 +329,20 @@ class Vector {
     return new Point(this.x, this.y, this.z);
   }
 
+  translate(vec: Vector) {
+    this.x += vec.x;
+    this.y += vec.y;
+    this.z += vec.z;
+  }
+
+  rotate(point: Point, axis: Axis, angle: Angle) {
+    let rotated = this.toPoint();
+    rotated.rotate(point, axis, angle);
+    this.x = rotated.x;
+    this.y = rotated.y;
+    this.z = rotated.z;
+  }
+
   static PositiveX = new Vector(1, 0, 0);
   static NegativeX = new Vector(-1, 0, 0);
   static PositiveY = new Vector(0, 1, 0);
@@ -359,6 +376,10 @@ class DrawableVector extends Colorable implements Drawable, Positional {
     endPoint.draw(canvas);
   }
 
+  translate(vec: Vector) {
+    this.vector.translate(vec);
+  }
+
   getPos() {
     let avg = new Point(0, 0, 0);
     avg.x = (this.origin.x + this.vector.x) / 2;
@@ -366,6 +387,10 @@ class DrawableVector extends Colorable implements Drawable, Positional {
     avg.z = (this.origin.z + this.vector.z) / 2;
     //console.log(this.origin.z + ", " + avg.z);
     return avg;
+  }
+
+  rotate(point: Point, axis: Axis, angle: Angle) {
+    this.vector.rotate(point, axis, angle);
   }
 }
 
@@ -404,6 +429,15 @@ class Angle {
 
   difference(angle: Angle) {
     return new Angle(this.radians - angle.radians);
+  }
+
+  multiply(x: number) {
+    this.value *= x;
+  }
+
+  invert(): Angle {
+    this.multiply(-1);
+    return this;
   }
 
   addRadians(radians: number) {
@@ -818,19 +852,37 @@ class Canvas {
 
 class RenderQueue {
   public renderQueue: Renderable[];
+  public shapeList: Shape[];
+  public simpleList: Positional[];
   constructor() {
     this.renderQueue = [];
+    this.shapeList = [];
+    this.simpleList = [];
   }
 
+  // Call this after everything is added
+  rotateCamera(axis: Axis, angle: Angle) {
+    let compoundList = this.simpleList.concat(this.shapeList);
+    angle.invert();
+    for (let p of compoundList) p.rotate(p.getPos(), axis, angle);
+    // TODO: Why is Cube rotating three times as fast as Square?
+  }
+
+  translateCamera(vec: Vector) {
+
+  }
+
+  // Breaks shapes into quads
   addShape(shape: Shape) {
+    this.shapeList.push(shape);
     for (let q of shape.quads) this.renderQueue.push(q);
   }
 
   addRenderable(r: Renderable) {
+    this.simpleList.push(r);
     this.renderQueue.push(r);
   }
 
-  // Breaks shapes into quads
   // Adds quads and points to renderQueue in order of descending Z
   readyRenderQueue() {
     //this.sortQueueByZ();
@@ -848,6 +900,8 @@ class RenderQueue {
 
   clearRenderQueue() {
     this.renderQueue = [];
+    this.shapeList = [];
+    this.simpleList = [];
   }
 
   // Draws all Drawable in renderQueue in order
@@ -859,23 +913,94 @@ class RenderQueue {
   }
 }
 
-// Test driving code
+// Interaction code //
+// This whole schtick is too extra
+class InteractiveLayer {
+  public leftKeyFunc: () => void;
+  public leftKeySymbol = 'a';
+  public rightKeyFunc: () => void;
+  public rightKeySymbol = 'd';
+  public upKeyFunc: () => void;
+  public upKeySymbol = 'w';
+  public downKeyFunc: () => void;
+  public downKeySymbol = 's';
+  public clickFunc: (e: MouseEvent) => void;
+  public mouseMoveFunc: (e: MouseEvent) => void;
+  public pressBuffer = {};
+  constructor(public element: HTMLElement) {
+    this.element.onkeydown = (e: KeyboardEvent) => {
+      this.pressBuffer[e.key] = true;
+    }
+
+    this.element.onkeyup = (e: KeyboardEvent) => {
+      this.pressBuffer[e.key] = null;
+    }
+
+    this.leftKeyFunc = () => {};
+    this.rightKeyFunc = () => {};
+    this.upKeyFunc = () => {};
+    this.downKeyFunc = () => {};
+    this.clickFunc = () => {};
+    this.mouseMoveFunc = () => {};
+  }
+
+  // all-important, call every frame
+  checkLayer() {
+    if (this.pressBuffer[this.leftKeySymbol]) this.leftKeyFunc();
+    if (this.pressBuffer[this.rightKeySymbol]) this.rightKeyFunc();
+    if (this.pressBuffer[this.upKeySymbol]) this.upKeyFunc();
+    if (this.pressBuffer[this.downKeySymbol]) this.downKeyFunc();
+  }
+
+  set click(newFunc: (e: MouseEvent) => void) {
+    this.element.onclick = newFunc;
+  }
+
+  set mouseMove(newFunc: (e: MouseEvent) => void) {
+    this.element.onmousemove = newFunc;
+  }
+  
+}
+var interactiveLayer = new InteractiveLayer(document.getElementsByTagName('html')[0]);
+
+// Test driving code //
 let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
 canvas.setBackgroundColor(new Color(0, 0, 0));
 
-let q = new Square(new Point(75, 75, 200), 100);
+let q = new Square(new Point(75, 75, 300), 100);
+
 
 let cube = new Cube(new Point(-100, -150, 300), 300);
 cube.color = Color.BLUE();
 cube.updateColor();
 
-var renderQueue = new RenderQueue();
+/* // This whole schtick is too extra
+interactiveLayer.leftKeyFunc = () => {cube.translate(new Vector(-speed, 0, 0))};
+interactiveLayer.rightKeyFunc = () => {cube.translate(new Vector(speed, 0, 0))};
+interactiveLayer.upKeyFunc = () => {cube.translate(new Vector(0, speed, 0))};
+interactiveLayer.downKeyFunc = () => {cube.translate(new Vector(0, -speed, 0))};
+*/
 
+var renderQueue = new RenderQueue();
 var fps = 30;
+
+let pressBuffer = {};
+document.getElementsByTagName('html')[0].onkeydown = (e) => {pressBuffer[e.key] = true};
+document.getElementsByTagName('html')[0].onkeyup = (e) => {pressBuffer[e.key] = null};
+let speed = 5;
 
 setInterval(() => {
   // Reset canvas for new frame
   canvas.clear();
+
+  // run key functions
+  if (pressBuffer['d']) cube.translate(new Vector(speed, 0, 0));
+  if (pressBuffer['a']) cube.translate(new Vector(-speed, 0, 0));
+  if (pressBuffer['s']) cube.translate(new Vector(0, -speed, 0));
+  if (pressBuffer['w']) cube.translate(new Vector(0, speed, 0));
+  if (pressBuffer['q']) cube.translate(new Vector(0, 0, -speed));
+  if (pressBuffer['e']) cube.translate(new Vector(0, 0, speed));
+
 
   // Draw quad
   q.color = Color.RED().lightParallel(Vector.PositiveY, q.normal, 1);
@@ -891,12 +1016,13 @@ setInterval(() => {
   //cube.drawNormals(renderQueue);
 
   // Renders all objects in a certain order
+  renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(1));
   renderQueue.render(canvas);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(1));
+  //cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(1));
 
-  q.rotate(q.center, Axis.X, Angle.fromDegrees(5));
+  //q.rotate(q.center, Axis.X, Angle.fromDegrees(5));
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);

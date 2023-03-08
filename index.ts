@@ -551,6 +551,7 @@ class Quad extends Colorable implements Drawable, Positional {
     return [this.p1, this.p2, this.p3, this.p4];
   }
 
+  // cube rotating faster than Square by like x3, but this is called ONCE for each quad in the scene. Issue may be in p.rotate()
   rotate(pivot: Point, axis: Axis, angle: Angle) {
     for (let p of this.points) p.rotate(pivot, axis, angle);
   }
@@ -612,11 +613,11 @@ class Quad extends Colorable implements Drawable, Positional {
 // I guess, implicitly implements Drawable, Positional VIA extending Quad
 class Square extends Quad {
   constructor(public centerPoint: Point, public size: number) {
-    let halfSize = size/2;
-    let pp = new Point(halfSize, halfSize, 0);
-    let pn = new Point(halfSize, -halfSize, 0);
-    let np = new Point(-halfSize, halfSize, 0);
-    let nn = new Point(-halfSize, -halfSize, 0);
+    let hs = size/2;
+    let pp = new Point(hs, hs, 0);
+    let pn = new Point(hs, -hs, 0);
+    let np = new Point(-hs, hs, 0);
+    let nn = new Point(-hs, -hs, 0);
     super(pp, np, nn, pn);
     this.translate(centerPoint.toVector());
   }
@@ -774,16 +775,17 @@ class Cube extends Shape {
       this.centerPosition = this.center;
     }
     this.quads = [];
-    let halfSize = this.size/2;
+    let hs = this.size/2;
+    /* 
     // xyz, p = positive, n = negative
-    let ppp = new Point(halfSize, halfSize, halfSize);
-    let ppn = new Point(halfSize, halfSize, -halfSize);
-    let pnp = new Point(halfSize, -halfSize, halfSize);
-    let pnn = new Point(halfSize, -halfSize, -halfSize);
-    let npp = new Point(-halfSize, halfSize, halfSize);
-    let npn = new Point(-halfSize, halfSize, -halfSize);
-    let nnp = new Point(-halfSize, -halfSize, halfSize);
-    let nnn = new Point(-halfSize, -halfSize, -halfSize);
+    let ppp = new Point(hs, hs, hs);
+    let ppn = new Point(hs, hs, -hs);
+    let pnp = new Point(hs, -hs, hs);
+    let pnn = new Point(hs, -hs, -hs);
+    let npp = new Point(-hs, hs, hs);
+    let npn = new Point(-hs, hs, -hs);
+    let nnp = new Point(-hs, -hs, hs);
+    let nnn = new Point(-hs, -hs, -hs);
     // Front
     this.addQuad(new Quad(ppn, npn, nnn, pnn));
     // Back
@@ -796,6 +798,21 @@ class Cube extends Shape {
     this.addQuad(new Quad(ppp, npp, npn, ppn));
     // Bottom
     this.addQuad(new Quad(pnp, pnn, nnn, nnp));
+    */
+    // Old, easy system caused quads to share point references, which messed up certain translations,
+    // eg, made it rotate ~3x faster because every point was rotated 3 times.
+    // Front
+    this.addQuad(new Quad(new Point(hs, hs, -hs), new Point(-hs, hs, -hs), new Point(-hs, -hs, -hs), new Point(hs, -hs, -hs)));
+    // Back
+    this.addQuad(new Quad(new Point(hs, hs, hs), new Point(hs, -hs, hs), new Point(-hs, -hs, hs), new Point(-hs, hs, hs)));
+    // Left
+    this.addQuad(new Quad(new Point(-hs, hs, -hs), new Point(-hs, hs, hs), new Point(-hs, -hs, hs), new Point(-hs, -hs, -hs)));
+    // Right
+    this.addQuad(new Quad(new Point(hs, hs, -hs), new Point(hs, -hs, -hs), new Point(hs, -hs, hs), new Point(hs, hs, hs)));
+    // Top
+    this.addQuad(new Quad(new Point(hs, hs, hs), new Point(-hs, hs, hs), new Point(-hs, hs, -hs), new Point(hs, hs, -hs)));
+    // Bottom
+    this.addQuad(new Quad(new Point(hs, -hs, hs), new Point(hs, -hs, -hs), new Point(-hs, -hs, -hs), new Point(-hs, -hs, hs)));
 
     this.translate(this.centerPosition.toVector());
   }
@@ -864,7 +881,7 @@ class RenderQueue {
   rotateCamera(axis: Axis, angle: Angle) {
     let compoundList = this.simpleList.concat(this.shapeList);
     angle.invert();
-    for (let p of compoundList) p.rotate(p.getPos(), axis, angle);
+    for (let p of compoundList) p.rotate(Point.ORIGIN(), axis, angle);
     // TODO: Why is Cube rotating three times as fast as Square?
   }
 
@@ -970,7 +987,7 @@ canvas.setBackgroundColor(new Color(0, 0, 0));
 let q = new Square(new Point(75, 75, 300), 100);
 
 
-let cube = new Cube(new Point(-100, -150, 300), 300);
+let cube = new Cube(new Point(-100, -150, 300), 100);
 cube.color = Color.BLUE();
 cube.updateColor();
 
@@ -1016,7 +1033,9 @@ setInterval(() => {
   //cube.drawNormals(renderQueue);
 
   // Renders all objects in a certain order
-  renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(1));
+  
+  if (pressBuffer['q']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(3));
+  if (pressBuffer['e']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-3));
   renderQueue.render(canvas);
 
   // Code that will modify the positon, rotation, scale, etc of objects:

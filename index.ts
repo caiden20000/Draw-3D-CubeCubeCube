@@ -1106,7 +1106,8 @@ document.getElementsByTagName('html')[0].onkeydown = (e) => {
 document.getElementsByTagName('html')[0].onkeyup = (e) => {
   pressBuffer[e.key] = null;
 };
-let speed = 5;
+var walkSpeed = 10;
+var turnSpeed = 5;
 
 setInterval(() => {
   // Reset canvas for new frame
@@ -1127,23 +1128,26 @@ setInterval(() => {
 
   // Renders all objects in a certain order
 
-  if (pressBuffer['q']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(speed));
-  if (pressBuffer['e']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-speed));
-  if (pressBuffer['d']) renderQueue.translateCamera(new Vector(speed, 0, 0));
-  if (pressBuffer['a']) renderQueue.translateCamera(new Vector(-speed, 0, 0));
-  if (pressBuffer['s']) renderQueue.translateCamera(new Vector(0, 0, -speed));
-  if (pressBuffer['w']) renderQueue.translateCamera(new Vector(0, 0, speed));
+  if (pressBuffer['q']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(turnSpeed));
+  if (pressBuffer['e']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-turnSpeed));
+  if (pressBuffer['d']) renderQueue.translateCamera(new Vector(walkSpeed, 0, 0));
+  if (pressBuffer['a']) renderQueue.translateCamera(new Vector(-walkSpeed, 0, 0));
+  if (pressBuffer['s']) renderQueue.translateCamera(new Vector(0, 0, -walkSpeed));
+  if (pressBuffer['w']) renderQueue.translateCamera(new Vector(0, 0, walkSpeed));
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
   q.drawNormal(renderQueue);
   renderQueue.render(canvas);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  //cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(1));
+  cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
 
-  //q.rotate(q.center, Axis.X, Angle.fromDegrees(5));
+  q.rotate(q.center, Axis.X, Angle.fromDegrees(8));
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);
 
 // TODO: method to get rotation of a quad or shapee
+
+// TODO: There needs to be a structure where all instantiated objects are added to a superArray,
+//       and this can be used for "camera movement" as well as rendering.

@@ -442,6 +442,7 @@ class Angle {
 
   multiply(x: number) {
     this.value *= x;
+    return this;
   }
 
   invert(): Angle {
@@ -449,12 +450,18 @@ class Angle {
     return this;
   }
 
+  add(angle: Angle): Angle {
+    return this;
+  }
+
   addRadians(radians: number) {
     this.value += radians;
+    return this;
   }
 
   addDegrees(degrees: number) {
     this.value += Angle.degreesToRadians(degrees);
+    return this;
   }
 
   // Modifies this object
@@ -1170,6 +1177,14 @@ setInterval(() => {
 // that can encapsulate a Renderable
 // and has the methods to calculate and store camera space.
 
+// TODO new paradigm:
+//      any method that modifies the object must return the object
+//      for chaining purposes.
+//      ie so we can do "return angle.rotate(x);"
+//      instead of "angle.rotate(x); return angle;"
+//    Right now its a mess, half of the methods do and half don't.
+
+// TODO: replace Positional interface with this
 interface PositionalFinal {
   getRotation(Point, Axis): Angle;
   setRotation(Point, Axis, Angle): Positional;
@@ -1181,5 +1196,52 @@ interface PositionalFinal {
 }
 
 class PositionalObject implements PositionalFinal {
-  
+  constructor(public x, public y, public z) {
+    
+  }
+
+  _getAxisDiff(pivot: Point, axis: Axis) {
+    let dx = 0, dy = 0;
+    if (axis == Axis.X) {
+      dx = this.y - pivot.y;
+      dy = this.z - pivot.z;
+    } else if (axis == Axis.Y) {
+      dx = this.x - pivot.x;
+      dy = this.z - pivot.z;
+    } else if (axis == Axis.Z) {
+      dx = this.x - pivot.x;
+      dy = this.y - pivot.y;
+    }
+    return {dx, dy};
+  }
+
+  getRotation(pivot: Point, axis: Axis): Angle {
+    let diff = this._getAxisDiff(pivot, axis);
+    let currentAngle = new Angle(Math.atan2(diff.dy, diff.dx));
+    return currentAngle;
+  }
+
+  setRotation(pivot: Point, axis: Axis, angle: Angle): Positional {
+    let diff = this._getAxisDiff(pivot, axis);
+    let radius = Math.sqrt(diff.dx ** 2 + diff.dy ** 2);
+    let newX = pivot.x + radius * Math.cos(angle.radians);
+    let newY = pivot.x + radius * Math.sin(angle.radians);
+    if (axis == Axis.X) {
+      this.y = newX;
+      this.z = newY;
+    } else if (axis == Axis.Y) {
+      this.x = newX;
+      this.z = newY;
+    } else if (axis == Axis.Z) {
+      this.x = newX;
+      this.y = newY;
+    }
+    return this;
+  }
+
+  rotate(pivot: Point, axis: Axis, angle: Angle): Positional {
+    let currentAngle = this.getRotation(pivot, axis);
+    this.setRotation(pivot, axis, currentAngle.add(angle));
+    return this;
+  }
 }

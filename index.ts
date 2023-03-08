@@ -1187,12 +1187,12 @@ setInterval(() => {
 // TODO: replace Positional interface with this
 interface PositionalFinal {
   getRotation(Point, Axis): Angle;
-  setRotation(Point, Axis, Angle): Positional;
-  rotate(Point, Axis, Angle): Positional;
+  setRotation(Point, Axis, Angle): PositionalFinal;
+  rotate(Point, Axis, Angle): PositionalFinal;
 
   getPosition(): Point;
-  setPosition(Point): Positional;
-  translate(Vector): Positional;
+  setPosition(Point): PositionalFinal;
+  translate(Vector): PositionalFinal;
 }
 
 class PositionalObject implements PositionalFinal {
@@ -1221,7 +1221,7 @@ class PositionalObject implements PositionalFinal {
     return currentAngle;
   }
 
-  setRotation(pivot: Point, axis: Axis, angle: Angle): Positional {
+  setRotation(pivot: Point, axis: Axis, angle: Angle): PositionalFinal {
     let diff = this._getAxisDiff(pivot, axis);
     let radius = Math.sqrt(diff.dx ** 2 + diff.dy ** 2);
     let newX = pivot.x + radius * Math.cos(angle.radians);
@@ -1239,9 +1239,27 @@ class PositionalObject implements PositionalFinal {
     return this;
   }
 
-  rotate(pivot: Point, axis: Axis, angle: Angle): Positional {
+  rotate(pivot: Point, axis: Axis, angle: Angle): PositionalFinal {
     let currentAngle = this.getRotation(pivot, axis);
     this.setRotation(pivot, axis, currentAngle.add(angle));
+    return this;
+  }
+
+  getPosition(): Point {
+    return new Point(this.x, this.y, this.z);
+  }
+
+  setPosition(point: Point): PositionalFinal {
+    this.x = point.x;
+    this.y = point.y;
+    this.z = point.z;
+    return this;
+  }
+
+  translate(vec: Vector): PositionalFinal {
+    this.x += vec.x;
+    this.y += vec.y;
+    this.z += vec.z;
     return this;
   }
 }

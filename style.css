@@ -6,7 +6,10 @@ h1, h2 {
 }
 
 #canvas {
-  border: 2px solid black;
+  box-shadow: 10px 10px 5px #333;
+  border: 3px solid #FFF;
+  border-radius: 15px 15px;
+  border-style: inset;
 }
 
 html {

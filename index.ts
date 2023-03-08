@@ -56,7 +56,7 @@ let splashText: string[] = [
   'INTENTIONALLY LEFT BLANK',
   'LGBTQIA++ is not a coding language',
   'SPIN FASTER',
-  'Direct Access'
+  'Direct Access',
 ];
 
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
@@ -77,7 +77,9 @@ appDiv.appendChild(canvasElement);
 const ctx = canvasElement.getContext('2d');
 
 enum Axis {
-  X,Y,Z
+  X,
+  Y,
+  Z,
 }
 
 interface Drawable {
@@ -141,7 +143,7 @@ class Point extends Colorable implements Drawable, Positional {
   _rotateGeneral(thisX, thisY, pivotX, pivotY, angle: Angle) {
     let dx = thisX - pivotX;
     let dy = thisY - pivotY;
-    let radius = Math.sqrt((dx**2 + dy**2));
+    let radius = Math.sqrt(dx ** 2 + dy ** 2);
     let currentAngle = new Angle(Math.atan2(dy, dx));
     let newX = pivotX + radius * Math.cos(currentAngle.radians + angle.radians);
     let newY = pivotY + radius * Math.sin(currentAngle.radians + angle.radians);
@@ -185,12 +187,16 @@ class Point extends Colorable implements Drawable, Positional {
     return new Vector(this.x, this.y, this.z);
   }
 
-
   public drawSize = 6;
   draw(canvas: Canvas) {
     let proj = canvas.screen.projectPoint(this);
     this.applyColor(canvas);
-    canvas.ctx.fillRect(proj.x-(this.drawSize/2), proj.y-(this.drawSize/2), this.drawSize, this.drawSize);
+    canvas.ctx.fillRect(
+      proj.x - this.drawSize / 2,
+      proj.y - this.drawSize / 2,
+      this.drawSize,
+      this.drawSize
+    );
   }
 
   getPos(): Point {
@@ -352,8 +358,11 @@ class Vector {
 }
 
 class DrawableVector extends Colorable implements Drawable, Positional {
-
-  constructor(public vector: Vector, public origin: Point, public length: number = 50) {
+  constructor(
+    public vector: Vector,
+    public origin: Point,
+    public length: number = 50
+  ) {
     super();
     this.vector.normalize();
     this.vector.multiplyNum(length);
@@ -361,7 +370,7 @@ class DrawableVector extends Colorable implements Drawable, Positional {
   }
 
   draw(canvas: Canvas) {
-    let vec = this.vector.copy();  // Don't want to modify the original vector
+    let vec = this.vector.copy(); // Don't want to modify the original vector
     let projectedOrigin = canvas.screen.projectPoint(this.origin);
     let projectedVector = canvas.screen.projectPoint(vec.toPoint());
     this.applyColor(canvas);
@@ -370,10 +379,10 @@ class DrawableVector extends Colorable implements Drawable, Positional {
     canvas.ctx.lineTo(projectedVector.x, projectedVector.y);
     canvas.ctx.closePath();
     canvas.ctx.stroke();
-    
-    let endPoint = vec.toPoint();
-    endPoint.drawSize = 10/(vec.z/100);
-    endPoint.draw(canvas);
+
+    //let endPoint = vec.toPoint();
+    //endPoint.drawSize = 10 / (vec.z / 100);
+    //endPoint.draw(canvas);
   }
 
   translate(vec: Vector) {
@@ -486,12 +495,14 @@ class Angle {
 class Frustum {
   public xDom: number;
   public yDom: number;
-  constructor(public width: number = canvasWidth,
-              public height: number = canvasHeight,
-              public alpha: Angle = Angle.fromDegrees(45), 
-              public beta: Angle = Angle.fromDegrees(45)) {
-      this.xDom = width/2;
-      this.yDom = height/2;
+  constructor(
+    public width: number = canvasWidth,
+    public height: number = canvasHeight,
+    public alpha: Angle = Angle.fromDegrees(45),
+    public beta: Angle = Angle.fromDegrees(45)
+  ) {
+    this.xDom = width / 2;
+    this.yDom = height / 2;
   }
 
   // Returns a vector pointing to the corner fo the first quadrant of
@@ -499,8 +510,12 @@ class Frustum {
   // ie. the X and Y components are 1/2 width and height of face at that Z value
   getDomAtZ(z: number): Vector {
     if (z < 0) return new Vector(0, 0, z);
-    let dx = (z * Math.sin(this.alpha.radians)) / Math.sin(Angle.Deg90().difference(this.alpha).radians);
-    let dy = (z * Math.sin(this.beta.radians)) / Math.sin(Angle.Deg90().difference(this.beta).radians);
+    let dx =
+      (z * Math.sin(this.alpha.radians)) /
+      Math.sin(Angle.Deg90().difference(this.alpha).radians);
+    let dy =
+      (z * Math.sin(this.beta.radians)) /
+      Math.sin(Angle.Deg90().difference(this.beta).radians);
     //console.log(dx);
     if (isNaN(dx) || !isFinite(dx)) dx = 0;
     if (isNaN(dy) || !isFinite(dy)) dy = 0;
@@ -511,7 +526,11 @@ class Frustum {
     let pDom = this.getDomAtZ(p.z);
     //console.log(pDom);
     // Normalize point position with (p.x / pDom.x), then project by multiplying this.xDom
-    let projected = new Point((p.x * this.xDom) / pDom.x, (p.y * this.yDom) / pDom.y, 0);
+    let projected = new Point(
+      (p.x * this.xDom) / pDom.x,
+      (p.y * this.yDom) / pDom.y,
+      0
+    );
     return projected;
   }
 
@@ -543,7 +562,12 @@ class Frustum {
 // Collection of 4 points drawn as a face
 // Try to keep them all on one plane, please!
 class Quad extends Colorable implements Drawable, Positional {
-  constructor(public p1: Point, public p2: Point, public p3: Point, public p4: Point) {
+  constructor(
+    public p1: Point,
+    public p2: Point,
+    public p3: Point,
+    public p4: Point
+  ) {
     super();
   }
 
@@ -613,7 +637,7 @@ class Quad extends Colorable implements Drawable, Positional {
 // I guess, implicitly implements Drawable, Positional VIA extending Quad
 class Square extends Quad {
   constructor(public centerPoint: Point, public size: number) {
-    let hs = size/2;
+    let hs = size / 2;
     let pp = new Point(hs, hs, 0);
     let pn = new Point(hs, -hs, 0);
     let np = new Point(-hs, hs, 0);
@@ -625,13 +649,23 @@ class Square extends Quad {
 
 // Various color utilities
 class Color {
-  constructor(public r: number, public g: number, public b: number, public a: number = 1) {};
-  
+  constructor(
+    public r: number,
+    public g: number,
+    public b: number,
+    public a: number = 1
+  ) {}
+
   toString() {
     return `rgba(${this.r}, ${this.g}, ${this.b}, ${this.a})`;
   }
 
-  lightParallel(vec1: Vector, vec2: Vector, cycles: number = 1, darkness: Color = new Color(20, 20, 20)) {
+  lightParallel(
+    vec1: Vector,
+    vec2: Vector,
+    cycles: number = 1,
+    darkness: Color = new Color(20, 20, 20)
+  ) {
     let angle: Angle = Vector.angleBetween(vec1, vec2);
     let factor = -Math.cos(angle.radians * cycles);
     factor += 1;
@@ -664,7 +698,12 @@ class Color {
   // Frac == 1 -> returns col2
   // Frac == 0.5 -> returns halfway between col1 and col2
   static Interpolate(col1: Color, col2: Color, frac: number): Color {
-    let dCol = new Color(col2.r - col1.r, col2.g - col1.g, col2.b - col1.b, col2.a - col1.a);
+    let dCol = new Color(
+      col2.r - col1.r,
+      col2.g - col1.g,
+      col2.b - col1.b,
+      col2.a - col1.a
+    );
     let middleColor = new Color(col1.r, col1.g, col1.b, col1.a);
     middleColor.r += dCol.r * frac;
     middleColor.g += dCol.g * frac;
@@ -700,7 +739,7 @@ class Shape extends Colorable implements Drawable, Positional {
     super();
     this.quads = [];
   }
-  
+
   addQuad(quad: Quad) {
     this.quads.push(quad);
   }
@@ -727,7 +766,7 @@ class Shape extends Colorable implements Drawable, Positional {
   translate(vec: Vector) {
     for (let quad of this.quads) quad.translate(vec);
   }
-  
+
   updateColor() {
     for (let quad of this.quads) {
       quad.fillColor = this.fillColor;
@@ -738,7 +777,11 @@ class Shape extends Colorable implements Drawable, Positional {
   // Lights each quad based on how aligned the quad is with the input vector
   // ie,  quad.normal parallel to vector == this.fillColor
   //      quad.normal orthogonal to vector == darkness color
-  lightNormal(vector: Vector, intensity: number = 1, darkness: Color = new Color(20, 20, 20)) {
+  lightNormal(
+    vector: Vector,
+    intensity: number = 1,
+    darkness: Color = new Color(20, 20, 20)
+  ) {
     let litColor = this.fillColor.copy();
     litColor = litColor.multiply(intensity);
     for (let quad of this.quads) {
@@ -775,7 +818,7 @@ class Cube extends Shape {
       this.centerPosition = this.center;
     }
     this.quads = [];
-    let hs = this.size/2;
+    let hs = this.size / 2;
     /* 
     // xyz, p = positive, n = negative
     let ppp = new Point(hs, hs, hs);
@@ -802,17 +845,59 @@ class Cube extends Shape {
     // Old, easy system caused quads to share point references, which messed up certain translations,
     // eg, made it rotate ~3x faster because every point was rotated 3 times.
     // Front
-    this.addQuad(new Quad(new Point(hs, hs, -hs), new Point(-hs, hs, -hs), new Point(-hs, -hs, -hs), new Point(hs, -hs, -hs)));
+    this.addQuad(
+      new Quad(
+        new Point(hs, hs, -hs),
+        new Point(-hs, hs, -hs),
+        new Point(-hs, -hs, -hs),
+        new Point(hs, -hs, -hs)
+      )
+    );
     // Back
-    this.addQuad(new Quad(new Point(hs, hs, hs), new Point(hs, -hs, hs), new Point(-hs, -hs, hs), new Point(-hs, hs, hs)));
+    this.addQuad(
+      new Quad(
+        new Point(hs, hs, hs),
+        new Point(hs, -hs, hs),
+        new Point(-hs, -hs, hs),
+        new Point(-hs, hs, hs)
+      )
+    );
     // Left
-    this.addQuad(new Quad(new Point(-hs, hs, -hs), new Point(-hs, hs, hs), new Point(-hs, -hs, hs), new Point(-hs, -hs, -hs)));
+    this.addQuad(
+      new Quad(
+        new Point(-hs, hs, -hs),
+        new Point(-hs, hs, hs),
+        new Point(-hs, -hs, hs),
+        new Point(-hs, -hs, -hs)
+      )
+    );
     // Right
-    this.addQuad(new Quad(new Point(hs, hs, -hs), new Point(hs, -hs, -hs), new Point(hs, -hs, hs), new Point(hs, hs, hs)));
+    this.addQuad(
+      new Quad(
+        new Point(hs, hs, -hs),
+        new Point(hs, -hs, -hs),
+        new Point(hs, -hs, hs),
+        new Point(hs, hs, hs)
+      )
+    );
     // Top
-    this.addQuad(new Quad(new Point(hs, hs, hs), new Point(-hs, hs, hs), new Point(-hs, hs, -hs), new Point(hs, hs, -hs)));
+    this.addQuad(
+      new Quad(
+        new Point(hs, hs, hs),
+        new Point(-hs, hs, hs),
+        new Point(-hs, hs, -hs),
+        new Point(hs, hs, -hs)
+      )
+    );
     // Bottom
-    this.addQuad(new Quad(new Point(hs, -hs, hs), new Point(hs, -hs, -hs), new Point(-hs, -hs, -hs), new Point(-hs, -hs, hs)));
+    this.addQuad(
+      new Quad(
+        new Point(hs, -hs, hs),
+        new Point(hs, -hs, -hs),
+        new Point(-hs, -hs, -hs),
+        new Point(-hs, -hs, hs)
+      )
+    );
 
     this.translate(this.centerPosition.toVector());
   }
@@ -825,7 +910,10 @@ class Canvas {
   public backgroundColor: Color = new Color(0, 0, 0);
   public width;
   public height;
-  constructor(public canvasElement: HTMLCanvasElement, public fov: Angle = Angle.fromDegrees(90)) {
+  constructor(
+    public canvasElement: HTMLCanvasElement,
+    public fov: Angle = Angle.fromDegrees(90)
+  ) {
     this.width = canvasElement.width;
     this.height = canvasElement.height;
     this.screen = new Frustum(this.width, this.height, fov, fov);
@@ -837,7 +925,12 @@ class Canvas {
   }
 
   clear() {
-    this.ctx.clearRect(-this.width/2, -this.height/2, this.width, this.height);
+    this.ctx.clearRect(
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
     this.drawBackgroundColor();
   }
 
@@ -853,18 +946,17 @@ class Canvas {
 
   drawBackgroundColor() {
     this.setColor(this.backgroundColor);
-    this.ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
+    this.ctx.fillRect(
+      -this.width / 2,
+      -this.height / 2,
+      this.width,
+      this.height
+    );
   }
-
-  
-
-  
 
   drawArrowHead(point: Point, vec: Vector, size: number) {
-    
     this.ctx.beginPath();
   }
-
 }
 
 class RenderQueue {
@@ -886,7 +978,9 @@ class RenderQueue {
   }
 
   translateCamera(vec: Vector) {
-
+    let compoundList = this.simpleList.concat(this.shapeList);
+    vec.invert();
+    for (let p of compoundList) p.translate(vec);
   }
 
   // Breaks shapes into quads
@@ -908,11 +1002,15 @@ class RenderQueue {
 
   sortQueueByZ() {
     // Hopefully sorts descending Z
-    this.renderQueue.sort((a, b) => (b.getPos().z - a.getPos().z));
+    this.renderQueue.sort((a, b) => b.getPos().z - a.getPos().z);
   }
 
   sortQueueByDistanceToOrigin() {
-    this.renderQueue.sort((a, b) => (b.getPos().distanceTo(Point.ORIGIN()) - a.getPos().distanceTo(Point.ORIGIN())));
+    this.renderQueue.sort(
+      (a, b) =>
+        b.getPos().distanceTo(Point.ORIGIN()) -
+        a.getPos().distanceTo(Point.ORIGIN())
+    );
   }
 
   clearRenderQueue() {
@@ -947,11 +1045,11 @@ class InteractiveLayer {
   constructor(public element: HTMLElement) {
     this.element.onkeydown = (e: KeyboardEvent) => {
       this.pressBuffer[e.key] = true;
-    }
+    };
 
     this.element.onkeyup = (e: KeyboardEvent) => {
       this.pressBuffer[e.key] = null;
-    }
+    };
 
     this.leftKeyFunc = () => {};
     this.rightKeyFunc = () => {};
@@ -976,16 +1074,16 @@ class InteractiveLayer {
   set mouseMove(newFunc: (e: MouseEvent) => void) {
     this.element.onmousemove = newFunc;
   }
-  
 }
-var interactiveLayer = new InteractiveLayer(document.getElementsByTagName('html')[0]);
+var interactiveLayer = new InteractiveLayer(
+  document.getElementsByTagName('html')[0]
+);
 
 // Test driving code //
 let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
 canvas.setBackgroundColor(new Color(0, 0, 0));
 
 let q = new Square(new Point(75, 75, 300), 100);
-
 
 let cube = new Cube(new Point(-100, -150, 300), 100);
 cube.color = Color.BLUE();
@@ -1002,8 +1100,12 @@ var renderQueue = new RenderQueue();
 var fps = 30;
 
 let pressBuffer = {};
-document.getElementsByTagName('html')[0].onkeydown = (e) => {pressBuffer[e.key] = true};
-document.getElementsByTagName('html')[0].onkeyup = (e) => {pressBuffer[e.key] = null};
+document.getElementsByTagName('html')[0].onkeydown = (e) => {
+  pressBuffer[e.key] = true;
+};
+document.getElementsByTagName('html')[0].onkeyup = (e) => {
+  pressBuffer[e.key] = null;
+};
 let speed = 5;
 
 setInterval(() => {
@@ -1011,20 +1113,11 @@ setInterval(() => {
   canvas.clear();
 
   // run key functions
-  if (pressBuffer['d']) cube.translate(new Vector(speed, 0, 0));
-  if (pressBuffer['a']) cube.translate(new Vector(-speed, 0, 0));
-  if (pressBuffer['s']) cube.translate(new Vector(0, -speed, 0));
-  if (pressBuffer['w']) cube.translate(new Vector(0, speed, 0));
-  if (pressBuffer['q']) cube.translate(new Vector(0, 0, -speed));
-  if (pressBuffer['e']) cube.translate(new Vector(0, 0, speed));
-
 
   // Draw quad
   q.color = Color.RED().lightParallel(Vector.PositiveY, q.normal, 1);
   renderQueue.addRenderable(q);
 
-  // Draw quad's normal vector (in default coloring)
-  q.drawNormal(renderQueue);
 
   // Draw cube, shaded by how parallel normal is to vector
   cube.lightNormal(new Vector(1, 2, -2), 0.9);
@@ -1033,9 +1126,16 @@ setInterval(() => {
   //cube.drawNormals(renderQueue);
 
   // Renders all objects in a certain order
-  
-  if (pressBuffer['q']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(3));
-  if (pressBuffer['e']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-3));
+
+  if (pressBuffer['q']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(speed));
+  if (pressBuffer['e']) renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-speed));
+  if (pressBuffer['d']) renderQueue.translateCamera(new Vector(speed, 0, 0));
+  if (pressBuffer['a']) renderQueue.translateCamera(new Vector(-speed, 0, 0));
+  if (pressBuffer['s']) renderQueue.translateCamera(new Vector(0, 0, -speed));
+  if (pressBuffer['w']) renderQueue.translateCamera(new Vector(0, 0, speed));
+  // Draw quad's normal vector (in default coloring)
+  // Must draw after rotation/translation otherwise optical lagging occurs
+  q.drawNormal(renderQueue);
   renderQueue.render(canvas);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
@@ -1045,6 +1145,5 @@ setInterval(() => {
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);
-
 
 // TODO: method to get rotation of a quad or shapee

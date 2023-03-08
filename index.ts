@@ -1184,6 +1184,10 @@ setInterval(() => {
 //      instead of "angle.rotate(x); return angle;"
 //    Right now its a mess, half of the methods do and half don't.
 
+// TODO new paradigm:
+//      NO get/set getters and setters.
+//      only explicit method getSomething() and setSomething().
+
 // TODO: replace Positional interface with this
 interface PositionalFinal {
   getRotation(Point, Axis): Angle;
@@ -1195,10 +1199,22 @@ interface PositionalFinal {
   translate(Vector): PositionalFinal;
 }
 
+interface DrawableFinal {
+  strokeColor: Color;
+  fillColor: Color;
+  setColor(color: Color);
+  getStrokeColor(): Color;
+  setStrokeColor(strokeColor: Color);
+  getFillColor(): Color;
+  setFillColor(fillColor: Color);
+
+  draw(canvas: Canvas);
+}
+
+type RenderableFinal = PositionalFinal & DrawableFinal;
+
 class PositionalObject implements PositionalFinal {
-  constructor(public x, public y, public z) {
-    
-  }
+  constructor(public x, public y, public z) {}
 
   _getAxisDiff(pivot: Point, axis: Axis) {
     let dx = 0, dy = 0;
@@ -1261,5 +1277,29 @@ class PositionalObject implements PositionalFinal {
     this.y += vec.y;
     this.z += vec.z;
     return this;
+  }
+}
+
+class Camera extends PositionalObject {
+  public frustum: Frustum;
+  constructor(public width, public height, public horizontalFOV = Angle.fromDegrees(45), public verticalFOV = horizontalFOV) {
+    super(0, 0, 0);
+    this.frustum = new Frustum(width, height, horizontalFOV, verticalFOV);
+  }
+}
+
+// Renderable encapsulator
+// keeps a reference to a Renderable object to
+// calculate and store the camera space position.
+// The storage is important for optimization.
+class CameraSpaceRenderable {
+  constructor(public object: Renderable, public camera: Camera) {}
+
+}
+
+class ScreenSpaceRenderable {
+  public frustum: Frustum;
+  constructor(public object: CameraSpaceRenderable, public canvas: Canvas) {
+    this.frustum = object.camera.frustum;
   }
 }

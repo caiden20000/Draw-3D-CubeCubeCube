@@ -1,7 +1,14 @@
 h1, h2 {
   font-family: sans-serif;
+  text-align: center;
+  text-shadow: 2px 1px 1px red, -2px -1px 1px blue, 8px 5px 8px #222;
+  color: white;
 }
 
 #canvas {
   border: 2px solid black;
+}
+
+html {
+  background: #829ce2;
 }

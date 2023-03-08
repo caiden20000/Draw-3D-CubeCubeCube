@@ -69,7 +69,6 @@ let canvasElement: HTMLCanvasElement = document.createElement('canvas');
 canvasElement.id = 'canvas';
 canvasElement.width = canvasWidth;
 canvasElement.height = canvasHeight;
-//appDiv.appendChild(new HTMLBRElement());
 appDiv.appendChild(canvasElement);
 
 // // // // // Tools // // // // //
@@ -1035,57 +1034,6 @@ class RenderQueue {
   }
 }
 
-// Interaction code //
-// This whole schtick is too extra
-class InteractiveLayer {
-  public leftKeyFunc: () => void;
-  public leftKeySymbol = 'a';
-  public rightKeyFunc: () => void;
-  public rightKeySymbol = 'd';
-  public upKeyFunc: () => void;
-  public upKeySymbol = 'w';
-  public downKeyFunc: () => void;
-  public downKeySymbol = 's';
-  public clickFunc: (e: MouseEvent) => void;
-  public mouseMoveFunc: (e: MouseEvent) => void;
-  public pressBuffer = {};
-  constructor(public element: HTMLElement) {
-    this.element.onkeydown = (e: KeyboardEvent) => {
-      this.pressBuffer[e.key] = true;
-    };
-
-    this.element.onkeyup = (e: KeyboardEvent) => {
-      this.pressBuffer[e.key] = null;
-    };
-
-    this.leftKeyFunc = () => {};
-    this.rightKeyFunc = () => {};
-    this.upKeyFunc = () => {};
-    this.downKeyFunc = () => {};
-    this.clickFunc = () => {};
-    this.mouseMoveFunc = () => {};
-  }
-
-  // all-important, call every frame
-  checkLayer() {
-    if (this.pressBuffer[this.leftKeySymbol]) this.leftKeyFunc();
-    if (this.pressBuffer[this.rightKeySymbol]) this.rightKeyFunc();
-    if (this.pressBuffer[this.upKeySymbol]) this.upKeyFunc();
-    if (this.pressBuffer[this.downKeySymbol]) this.downKeyFunc();
-  }
-
-  set click(newFunc: (e: MouseEvent) => void) {
-    this.element.onclick = newFunc;
-  }
-
-  set mouseMove(newFunc: (e: MouseEvent) => void) {
-    this.element.onmousemove = newFunc;
-  }
-}
-var interactiveLayer = new InteractiveLayer(
-  document.getElementsByTagName('html')[0]
-);
-
 // Test driving code //
 let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
 canvas.setBackgroundColor(new Color(0, 0, 0));
@@ -1095,13 +1043,6 @@ let q = new Square(new Point(75, 75, 300), 100);
 let cube = new Cube(new Point(-100, -150, 300), 100);
 cube.color = Color.BLUE();
 cube.updateColor();
-
-/* // This whole schtick is too extra
-interactiveLayer.leftKeyFunc = () => {cube.translate(new Vector(-speed, 0, 0))};
-interactiveLayer.rightKeyFunc = () => {cube.translate(new Vector(speed, 0, 0))};
-interactiveLayer.upKeyFunc = () => {cube.translate(new Vector(0, speed, 0))};
-interactiveLayer.downKeyFunc = () => {cube.translate(new Vector(0, -speed, 0))};
-*/
 
 var renderQueue = new RenderQueue();
 var fps = 30;
@@ -1286,6 +1227,20 @@ class Camera extends PositionalObject {
     super(0, 0, 0);
     this.frustum = new Frustum(width, height, horizontalFOV, verticalFOV);
   }
+
+  toCameraSpace(point: Point): Point {
+    // TODO
+    return point;
+  }
+
+  fromCameraSpaceToScreenSpace(point: Point): Point {
+    // TODO
+    return point;
+  }
+
+  toScreenSpace(point: Point) {
+    return this.fromCameraSpaceToScreenSpace(this.toCameraSpace(point));
+  }
 }
 
 // Renderable encapsulator
@@ -1303,3 +1258,13 @@ class ScreenSpaceRenderable {
     this.frustum = object.camera.frustum;
   }
 }
+
+
+/**
+ * The structure of the rendering pipeline:
+ * Points have x, y, z
+ * Everything renderable has points
+ * Points get converted into camera space via Camera
+ * Points get converted from camera space to Screen space via Screen
+ * points get drawn on screen
+ */

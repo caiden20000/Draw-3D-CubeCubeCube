@@ -1151,3 +1151,35 @@ setInterval(() => {
 
 // TODO: There needs to be a structure where all instantiated objects are added to a superArray,
 //       and this can be used for "camera movement" as well as rendering.
+
+// TODO: Uh oh, quaternions.
+//       Basically, if we rotate everything in the scene to rotate the camera, then we have to have quaternion based rotation
+
+// TODO: Coordinate pipeline
+// Right now we have world space -> screen space
+// Rotating all of the objects instead of rotating the camera is
+// NOT sustainable, as something rotating on an axis will rotate on
+// the new axis after rotation.
+// SO we want a coordinate pipeline that goes
+// WorldSpace -> CameraSpace -> ScreenSpace
+// ie, all points in space are already stored in WorldSpace
+// but now we add a CameraSpace layer where things are 
+// rotated and translated with respect to the camera.
+// Maybe a new type of object can be used, called
+// CameraSpaceObject
+// that can encapsulate a Renderable
+// and has the methods to calculate and store camera space.
+
+interface PositionalFinal {
+  getRotation(Point, Axis): Angle;
+  setRotation(Point, Axis, Angle): Positional;
+  rotate(Point, Axis, Angle): Positional;
+
+  getPosition(): Point;
+  setPosition(Point): Positional;
+  translate(Vector): Positional;
+}
+
+class PositionalObject implements PositionalFinal {
+  
+}

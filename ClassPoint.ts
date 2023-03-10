@@ -34,6 +34,10 @@ class Point extends PositionalObject {
     this.z = Math.floor(this.z);
   }
 
+  equals(point: Point) {
+    return this.x == point.x && this.y == point.y && this.z == point.z;
+  }
+
   toVector(): Vector {
     return new Vector(this.x, this.y, this.z);
   }

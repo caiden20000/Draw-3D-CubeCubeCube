@@ -43,18 +43,13 @@ class Poly extends Renderable {
   }
 
   setRotation(pivot: Point, axis: Axis, angle: Angle) {
-    if (pivot == this.getCenter()) this.rotation = angle;
+    if (pivot.equals(this.getCenter())) this.rotation = angle;
     for (let p of this.points) p.rotate(pivot, axis, angle);
     return super.setRotation(pivot, axis, angle);
   }
 
   rotate(pivot: Point, axis: Axis, angle: Angle) {
-    if (pivot == this.getCenter()) {
-      this.rotation.add(angle);
-      for (let p of this.points) p.rotate(pivot, axis, this.rotation);
-      return super.rotate(pivot, axis, this.rotation);
-    }
-    for (let p of this.points) p.rotate(pivot, axis, angle);
+    if (pivot.equals(this.getCenter())) return super.rotate(pivot, axis, this.rotation.add(angle));
     return super.rotate(pivot, axis, angle);
   }
 
@@ -88,7 +83,7 @@ class Poly extends Renderable {
     this.applyColor(canvas);
     canvas.ctx.beginPath();
     canvas.ctx.moveTo(projectedPoints[0].x, projectedPoints[0].y);
-    for (let p of projectedPoints) canvas.ctx.lineTo(p.x, p.y);
+    for (let pp of projectedPoints) canvas.ctx.lineTo(pp.x, pp.y);
     canvas.ctx.closePath();
     canvas.ctx.fill();
     canvas.ctx.stroke();

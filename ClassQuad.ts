@@ -9,9 +9,13 @@ import { Positional } from './ClassPositionalObject';
 
 export { Quad };
 
+/**
+ * Minimum of 3 points
+ */
 class Poly extends Renderable {
   public rotation: Angle;
   constructor(public points: Point[]) {
+    if (points.length < 3) return;
     super(0, 0, 0);
     let center = this._determineCenter();
     this.x = center.x;
@@ -64,20 +68,47 @@ class Poly extends Renderable {
   }
 
   setPosition(point: Point) {
-    let diff = this.getCenter().distanceTo(point);
-    for (let p of this.points) p.translate(diff.);
+    let diff = this.getCenter().getDiff(point);
+    for (let p of this.points) p.translate(diff.toVector());
     this.x = point.x;
     this.y = point.y;
     this.z = point.z;
 
     return this;
   }
+
+  translate(vec: Vector) {
+    for (let p of this.points) p.translate(vec);
+    this.x += vec.x;
+    this.y += vec.y;
+    this.z += vec.z;
+    return this;
+  }
+
+  draw(canvas: Canvas) {
+    let projectedPoints: Point[];
+    for (let p of this.points) projectedPoints.push(canvas.screen.projectPoint(p));
+    
+    this.applyColor(canvas);
+    canvas.ctx.beginPath();
+    canvas.ctx.moveTo(projectedPoints[0].x, projectedPoints[0].y);
+    for (let p of projectedPoints) canvas.ctx.lineTo(p.x, p.y);
+    canvas.ctx.closePath();
+    canvas.ctx.fill();
+    canvas.ctx.stroke();
+  }
+
+  getNormal(): Vector {
+    let v1 = Vector.fromPoints(this.points[0], this.points[1]);
+    let v2 = Vector.fromPoints(this.points[0], this.points[this.points.length-1]);
+    let n = Vector.crossProduct(v1, v2);
+    //n.invert();
+    return n;
+  }
   
 }
 
-class Quad extends Renderable {
-  public points: Point[];
-  public centerPoint: Point;
+class Quad extends Poly {
   constructor(
     public p1: Point,
     public p2: Point,
@@ -85,77 +116,10 @@ class Quad extends Renderable {
     public p4: Point
   ) {
     let points = [p1, p2, p3, p4];
-    let avg = new Point(0, 0, 0);
-    for (let p of points) {
-      avg.x += p.x;
-      avg.y += p.y;
-      avg.z += p.z;
-    }
-    let numberOfPoints = points.length;
-    avg.x /= numberOfPoints;
-    avg.y /= numberOfPoints;
-    avg.z /= numberOfPoints;
-    super(avg.x, avg.y, avg.z);
-
-    this.points = points;
-    this.centerPoint = avg;
-  }
-
-  // cube rotating faster than Square by like x3, but this is called ONCE for each quad in the scene. Issue may be in p.rotate()
-  rotate(pivot: Point, axis: Axis, angle: Angle): Positional {
-    for (let p of this.points) p.rotate(pivot, axis, angle);
-    return this;
-  }
-
-  translate(vec: Vector): Positional {
-    for (let p of this.points) p.translate(vec);
-    return this;
-  }
-
-  floor(): Quad {
-    for (let p of this.points) p.floor();
-    this.centerPoint = this._getCenter();
-    return this;
-  }
-
-  _getCenter(): Point {
-    let avg = new Point(0, 0, 0);
-    for (let p of this.points) {
-      avg.x += p.x;
-      avg.y += p.y;
-      avg.z += p.z;
-    }
-    let numberOfPoints = this.points.length;
-    avg.x /= numberOfPoints;
-    avg.y /= numberOfPoints;
-    avg.z /= numberOfPoints;
-    return avg;
-  }
-
-  // Generates normal vector assuming all 4 points are on a plane
-  get normal(): Vector {
-    let v1 = Vector.fromPoints(this.p1, this.p2);
-    let v2 = Vector.fromPoints(this.p1, this.p4);
-    let n = Vector.crossProduct(v1, v2);
-    n.invert();
-    return n;
-  }
-
-  draw(canvas: Canvas) {
-    let projQuad = canvas.screen.projectQuad(this);
-    //projQuad.floor();
-    this.applyColor(canvas);
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(projQuad.p1.x, projQuad.p1.y);
-    canvas.ctx.lineTo(projQuad.p2.x, projQuad.p2.y);
-    canvas.ctx.lineTo(projQuad.p3.x, projQuad.p3.y);
-    canvas.ctx.lineTo(projQuad.p4.x, projQuad.p4.y);
-    canvas.ctx.closePath();
-    canvas.ctx.fill();
-    canvas.ctx.stroke();
+    super(points);
   }
 
   drawNormal(renderQueue: RenderQueue) {
-    renderQueue.addRenderable(new DrawableVector(this.normal, this.getCenter()));
+    renderQueue.addRenderable(new DrawableVector(this.getNormal(), this.getCenter()));
   }
 }

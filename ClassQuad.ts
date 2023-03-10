@@ -1,6 +1,7 @@
 import { Point } from './ClassPoint';
 import { RenderQueue } from './ClassRenderQueue';
 import { Poly } from './ClassPoly';
+import { DrawableVector } from './ClassDrawableVector';
 
 export { Quad };
 

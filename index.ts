@@ -3,11 +3,7 @@ import './style.css';
 
 // // // // // Imports // // // // //
 // import {  } from "./Class";
-import {
-  r,
-  r_li,
-  clamp,
-} from './CommonTypes';
+import { r, r_li, clamp } from './CommonTypes';
 import { Quad } from './ClassQuad';
 import { Point } from './ClassPoint';
 import { Shape } from './ClassShape';
@@ -82,11 +78,8 @@ appDiv.appendChild(canvasElement);
 
 const ctx = canvasElement.getContext('2d');
 
-
-
 // 6-sided shape with conjoined equilateral faces
 // like, uh, a dice
-
 
 // Test driving code //
 let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
@@ -94,9 +87,9 @@ canvas.setBackgroundColor(new Color(0, 0, 0));
 
 let q = new Square(new Point(75, 75, 300), 100);
 
-let cube = new Cube(new Point(-100, -150, 300), 100);
-cube.setColor(Color.BLUE());
-cube.updateColor();
+// let cube = new Cube(new Point(-100, -150, 300), 100);
+// cube.setColor(Color.BLUE());
+// cube.updateColor();
 
 var renderQueue = new RenderQueue();
 var fps = 30;
@@ -122,8 +115,8 @@ setInterval(() => {
   renderQueue.addRenderable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
-  cube.lightNormal(new Vector(1, 2, -2), 0.9);
-  renderQueue.addShape(cube);
+  // cube.lightNormal(new Vector(1, 2, -2), 0.9);
+  // renderQueue.addShape(cube);
 
   //cube.drawNormals(renderQueue);
 
@@ -147,17 +140,12 @@ setInterval(() => {
   renderQueue.render(canvas);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
+  // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
 
   q.rotate(q.getCenter(), Axis.X, Angle.fromDegrees(8));
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);
-
-
-
-
-
 
 // TODO: method to get rotation of a quad or shapee
 

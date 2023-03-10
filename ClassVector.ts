@@ -1,11 +1,13 @@
 import { Point } from './ClassPoint';
 import { Angle } from './ClassAngle';
-import { Axis } from './CommonTypes';
+import { PositionalObject } from './ClassPositionalObject';
 
 export { Vector };
 
-class Vector {
-  constructor(public x: number, public y: number, public z: number) {}
+class Vector extends PositionalObject {
+  constructor(x: number, y: number, z: number) {
+    super(x, y, z);
+  }
 
   // Returns independent copy of vector.
   copy(): Vector {
@@ -132,20 +134,6 @@ class Vector {
 
   toPoint(): Point {
     return new Point(this.x, this.y, this.z);
-  }
-
-  translate(vec: Vector) {
-    this.x += vec.x;
-    this.y += vec.y;
-    this.z += vec.z;
-  }
-
-  rotate(point: Point, axis: Axis, angle: Angle) {
-    let rotated = this.toPoint();
-    rotated.rotate(point, axis, angle);
-    this.x = rotated.x;
-    this.y = rotated.y;
-    this.z = rotated.z;
   }
 
   static PositiveX = new Vector(1, 0, 0);

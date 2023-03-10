@@ -5,8 +5,6 @@ import { Vector } from './ClassVector';
 
 export { DrawableVector };
 
-// INCOMPLETE
-
 class DrawableVector extends Poly {
   constructor(public origin: Point, public tip: Point) {
     super([origin, tip]);

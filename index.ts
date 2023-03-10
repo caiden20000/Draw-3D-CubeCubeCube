@@ -4,24 +4,19 @@ import './style.css';
 // // // // // Imports // // // // //
 // import {  } from "./Class";
 import {
-  Drawable,
-  Positional,
-  Renderable,
-  Colorable,
   r,
   r_li,
   clamp,
-  Axis,
 } from './CommonTypes';
+import { Quad } from './ClassQuad';
+import { Point } from './ClassPoint';
+import { Shape } from './ClassShape';
 import { Angle } from './ClassAngle';
 import { Canvas } from './ClassCanvas';
 import { Color } from './ClassColor';
-import { Frustum } from './ClassFrustum';
-import { Point } from './ClassPoint';
-import { Quad } from './ClassQuad';
 import { RenderQueue } from './ClassRenderQueue';
-import { Shape } from './ClassShape';
 import { Vector } from './ClassVector';
+import { Axis } from './EnumAxis';
 
 // Write TypeScript code!
 const appDiv: HTMLElement = document.getElementById('app');

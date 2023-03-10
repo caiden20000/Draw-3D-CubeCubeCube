@@ -10,6 +10,8 @@ import { Axis } from './EnumAxis';
 
 export { Shape };
 
+// VERY INCOMPLETE
+
 class Shape extends Renderable {
   public quads: Quad[];
   constructor(x: number, y: number, z: number) {

@@ -10,6 +10,14 @@ class DrawableVector extends Poly {
     super([origin, tip]);
   }
 
+  static fromVector(origin: Point, vector: Vector, length: number = 50) {
+    vector.normalize();
+    vector.multiplyNum(length);
+    vector.add(origin.toVector());
+
+    return new DrawableVector(origin, vector.toPoint());
+  }
+
   getVector(): Vector {
     return Vector.fromPoints(this.origin, this.tip);
   }

@@ -18,7 +18,7 @@ class Quad extends Poly {
 
   drawNormal(renderQueue: RenderQueue) {
     renderQueue.addRenderable(
-      new DrawableVector(this.getNormal(), this.getCenter())
+      DrawableVector.fromVector(this.getCenter(), this.getNormal())
     );
   }
 }

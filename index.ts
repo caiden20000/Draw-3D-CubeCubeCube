@@ -83,51 +83,7 @@ appDiv.appendChild(canvasElement);
 
 const ctx = canvasElement.getContext('2d');
 
-class DrawableVector extends Colorable implements Drawable, Positional {
-  constructor(
-    public vector: Vector,
-    public origin: Point,
-    public length: number = 50
-  ) {
-    super();
-    this.vector.normalize();
-    this.vector.multiplyNum(length);
-    this.vector.add(origin.toVector());
-  }
 
-  draw(canvas: Canvas) {
-    let vec = this.vector.copy(); // Don't want to modify the original vector
-    let projectedOrigin = canvas.screen.projectPoint(this.origin);
-    let projectedVector = canvas.screen.projectPoint(vec.toPoint());
-    this.applyColor(canvas);
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(projectedOrigin.x, projectedOrigin.y);
-    canvas.ctx.lineTo(projectedVector.x, projectedVector.y);
-    canvas.ctx.closePath();
-    canvas.ctx.stroke();
-
-    //let endPoint = vec.toPoint();
-    //endPoint.drawSize = 10 / (vec.z / 100);
-    //endPoint.draw(canvas);
-  }
-
-  translate(vec: Vector) {
-    this.vector.translate(vec);
-  }
-
-  getPos() {
-    let avg = new Point(0, 0, 0);
-    avg.x = (this.origin.x + this.vector.x) / 2;
-    avg.y = (this.origin.y + this.vector.y) / 2;
-    avg.z = (this.origin.z + this.vector.z) / 2;
-    //console.log(this.origin.z + ", " + avg.z);
-    return avg;
-  }
-
-  rotate(point: Point, axis: Axis, angle: Angle) {
-    this.vector.rotate(point, axis, angle);
-  }
-}
 
 // Collection of 4 points drawn as a face
 // Try to keep them all on one plane, please!

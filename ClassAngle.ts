@@ -46,6 +46,7 @@ class Angle {
   }
 
   add(angle: Angle): Angle {
+    this.value += angle.value;
     return this;
   }
 

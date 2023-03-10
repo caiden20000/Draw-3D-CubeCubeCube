@@ -1,12 +1,12 @@
 import { Canvas } from './ClassCanvas';
 import { Point } from './ClassPoint';
+import { Renderable } from './ClassRenderable';
 
 export { DrawablePoint };
 
 class DrawablePoint extends Renderable {
-  public point: Point;
-  constructor(public size: number = 6) {
-    super();
+  constructor(public point: Point, public size: number = 6) {
+    super(point.x, point.y, point.z);
   }
 
   draw(canvas: Canvas) {

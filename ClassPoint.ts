@@ -20,6 +20,14 @@ class Point extends PositionalObject {
     return Math.sqrt(dx ** 2 + dy ** 2 + dz ** 2);
   }
 
+  getDiff(point: Point): Point {
+    let diff = new Point(0, 0, 0);
+    diff.x = point.x - this.x;
+    diff.y = point.y - this.y;
+    diff.z = point.z - this.z;
+    return diff;
+  }
+
   floor() {
     this.x = Math.floor(this.x);
     this.y = Math.floor(this.y);

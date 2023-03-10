@@ -1,9 +1,9 @@
-export { Frustum };
-
 import { Angle } from './ClassAngle';
 import { Point } from './ClassPoint';
 import { Vector } from './ClassVector';
 import { Quad } from './ClassQuad';
+
+export { Frustum };
 
 class Frustum {
   public xDom: number;

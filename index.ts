@@ -142,7 +142,7 @@ setInterval(() => {
   // Code that will modify the positon, rotation, scale, etc of objects:
   // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
 
-  q.rotate(q.getCenter(), Axis.X, Angle.fromDegrees(8));
+  q.rotate(q.getCenter(), Axis.X, Angle.fromDegrees(1));
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);

@@ -37,19 +37,24 @@ class Poly extends Renderable {
     return new Point(this.x, this.y, this.z);
   }
 
+  // TODO: The rotation bitty ain't workin here
+  // fixie fixie
+
   getRotation(pivot: Point, axis: Axis) {
-    if (pivot == this.getCenter()) return this.rotation;
+    if (pivot.equals(this.getCenter())) return this.rotation;
     return super.getRotation(pivot, axis);
   }
 
   setRotation(pivot: Point, axis: Axis, angle: Angle) {
-    if (pivot.equals(this.getCenter())) this.rotation = angle;
+    //if (pivot.equals(this.getCenter())) this.rotation = angle;
     for (let p of this.points) p.rotate(pivot, axis, angle);
     return super.setRotation(pivot, axis, angle);
   }
 
   rotate(pivot: Point, axis: Axis, angle: Angle) {
-    if (pivot.equals(this.getCenter())) return super.rotate(pivot, axis, this.rotation.add(angle));
+    if (pivot.equals(this.getCenter())) {
+      return super.rotate(pivot, axis, this.rotation.add(angle));
+    }
     return super.rotate(pivot, axis, angle);
   }
 

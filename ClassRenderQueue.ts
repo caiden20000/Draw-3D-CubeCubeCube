@@ -1,15 +1,11 @@
-import {
-  Colorable,
-  Drawable,
-  Positional,
-  Renderable,
-  Axis,
-} from './CommonTypes';
 import { Shape } from './ClassShape';
 import { Angle } from './ClassAngle';
 import { Vector } from './ClassVector';
 import { Point } from './ClassPoint';
 import { Canvas } from './ClassCanvas';
+import { Renderable } from './ClassRenderable';
+import { Positional } from './ClassPositionalObject';
+import { Axis } from './EnumAxis';
 
 export { RenderQueue };
 
@@ -56,14 +52,14 @@ class RenderQueue {
 
   sortQueueByZ() {
     // Hopefully sorts descending Z
-    this.renderQueue.sort((a, b) => b.getPos().z - a.getPos().z);
+    this.renderQueue.sort((a, b) => b.getPosition().z - a.getPosition().z);
   }
 
   sortQueueByDistanceToOrigin() {
     this.renderQueue.sort(
       (a, b) =>
-        b.getPos().distanceTo(Point.ORIGIN()) -
-        a.getPos().distanceTo(Point.ORIGIN())
+        b.getPosition().distanceTo(Point.ORIGIN()) -
+        a.getPosition().distanceTo(Point.ORIGIN())
     );
   }
 

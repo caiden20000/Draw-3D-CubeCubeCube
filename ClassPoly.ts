@@ -9,7 +9,7 @@ export { Poly };
 
 class Poly extends Renderable {
   public rotation: Angle;
-  constructor(public points: Point[]) {
+  constructor(public points: Point[] = []) {
     //if (points.length < 3) return;
     super(0, 0, 0);
     let center = this._determineCenter();
@@ -81,7 +81,7 @@ class Poly extends Renderable {
   }
 
   draw(canvas: Canvas) {
-    let projectedPoints: Point[];
+    let projectedPoints: Point[] = [];
     for (let p of this.points)
       projectedPoints.push(canvas.screen.projectPoint(p));
 

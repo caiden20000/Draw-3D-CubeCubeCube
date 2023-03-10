@@ -1,22 +1,4 @@
-import { Point } from './ClassPoint';
-import { Color } from './ClassColor';
-import { Canvas } from './ClassCanvas';
-import { Vector } from './ClassVector';
-import { Angle } from './ClassAngle';
-import { PositionalObject } from './ClassPositionalObject';
-
-export { Drawable, Positional, Renderable, r, r_li, clamp, Axis };
-
-interface Positional {
-  translate(Vector);
-  getPos(): Point;
-  rotate(Point, Axis, Angle);
-  //getRot(Axis): Angle; // TODO
-}
-
-
-
-type Renderable = Drawable & Positional;
+export { r, r_li, clamp };
 
 // Returns random int in range [min, max] inclusive
 function r(min: number, max: number): number {
@@ -31,12 +13,3 @@ function r_li<T>(list: T[]): T {
 function clamp(value, min, max) {
   return Math.max(Math.min(value, max), min);
 }
-
-
-
-
-
-// TODO
-// I'm currently trying to combine PositionalObject + Drawable
-// to make a RenderableObject abstract superclass
-// I'm also refactoring the code to draw things with a Drawable extending class that encapsulates Points and Vectors, and the Quad class will extend Drawable

@@ -2,6 +2,8 @@ import { Canvas } from './ClassCanvas';
 import { Color } from './ClassColor';
 import { PositionalObject } from './ClassPositionalObject';
 
+export { Renderable, Drawable };
+
 interface Drawable {
   strokeColor: Color;
   fillColor: Color;

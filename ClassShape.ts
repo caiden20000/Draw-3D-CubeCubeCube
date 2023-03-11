@@ -7,49 +7,35 @@ import { Color } from './ClassColor';
 import { RenderQueue } from './ClassRenderQueue';
 import { Renderable } from './ClassRenderable';
 import { Axis } from './EnumAxis';
+import { Position, Rotation, Style } from './Components';
+import { Poly } from './ClassPoly';
+import { Camera } from './ClassCamera';
 
 export { Shape };
 
 // VERY INCOMPLETE
 
-class Shape extends Renderable {
-  public quads: Quad[];
+class Shape {
+  public position: Position;
+  public rotation: Rotation;
+  public style: Style;
+  public polys: Poly[];
   constructor(x: number, y: number, z: number) {
-    super(x, y, z);
-    this.quads = [];
+    this.position = new Position(x, y, z);
+    this.rotation = new Rotation(this.position);
+    this.style = new Style(Color.BLUE(), Color.GREEN());
+    this.polys = [];
   }
 
-  addQuad(quad: Quad) {
-    this.quads.push(quad);
+  addPoly(poly: Poly) {
+    this.polys.push(poly);
+    this.rotation.targets.concat(Rotation.getRotationArrayFromPoints(poly.points));
   }
-
-  getCenter(): Point {
-    let avg = new Point(0, 0, 0);
-    for (let quad of this.quads) {
-      let quadCenter = quad.getCenter();
-      avg.x += quadCenter.x;
-      avg.y += quadCenter.y;
-      avg.z += quadCenter.z;
-    }
-    let quadCount = this.quads.length;
-    avg.x /= quadCount;
-    avg.y /= quadCount;
-    avg.z /= quadCount;
-    return avg;
-  }
-
-  // rotate(pivot: Point, axis: Axis, angle: Angle) {
-  //   for (let quad of this.quads) quad.rotate(pivot, axis, angle);
-  // }
-
-  // translate(vec: Vector) {
-  //   for (let quad of this.quads) quad.translate(vec);
-  // }
 
   updateColor() {
-    for (let quad of this.quads) {
-      quad.fillColor = this.fillColor;
-      quad.strokeColor = this.strokeColor;
+    for (let poly of this.polys) {
+      poly.style.setFillColor(this.style.fillColor);
+      poly.style.setStrokeColor(this.style.strokeColor);
     }
   }
 
@@ -61,20 +47,22 @@ class Shape extends Renderable {
     intensity: number = 1,
     darkness: Color = new Color(20, 20, 20)
   ) {
-    let litColor = this.fillColor.copy();
+    let litColor = this.style.fillColor.copy();
     litColor = litColor.multiply(intensity);
-    for (let quad of this.quads) {
-      quad.setColor(litColor.lightParallel(quad.getNormal(), vector, 1, darkness));
+    for (let poly of this.polys) {
+      poly.style.setColor(
+        litColor.lightParallel(poly.getNormal(), vector, 1, darkness)
+      );
     }
   }
 
-  draw(canvas: Canvas) {
-    for (let quad of this.quads) quad.draw(canvas);
+  draw(camera: Camera) {
+    for (let poly of this.polys) poly.draw(camera);
   }
 
-  drawNormals(renderQueue: RenderQueue) {
-    for (let q of this.quads) {
-      q.drawNormal(renderQueue);
-    }
-  }
+  // drawNormals(renderQueue: RenderQueue) {
+  //   for (let poly of this.polys) {
+  //     poly.drawNormal(renderQueue);
+  //   }
+  // }
 }

@@ -133,12 +133,10 @@ setInterval(() => {
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
   // q.drawNormal(renderQueue);
+  renderQueue.stage();
   renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
 
-  q.rotation.rotate(Axis.X, Angle.fromDegrees(1), q.position);
-  //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
-  //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
+  //q.rotation.rotate(Axis.Z, Angle.fromDegrees(1), q.position);
 }, 1000 / fps);

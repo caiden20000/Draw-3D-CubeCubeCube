@@ -11,10 +11,21 @@ export { Position, Size, Rotation, Style };
  * Position Component.
  */
 class Position {
-  static get ORIGIN() {
-    return new Position(0, 0, 0);
+  constructor(
+    public x: number,
+    public y: number,
+    public z: number,
+    public targets: Position[] = []
+  ) {}
+
+  static getPositionArrayFromPoints(points: Point[]): Position[] {
+    let result: Position[] = [];
+    for (let p of points) result.push(p.position);
+    return result;
   }
-  constructor(public x: number, public y: number, public z: number) {}
+
+  // Finds the average position of all points
+  // Used to find the center of a poly
   static fromPoints(points: Point[]): Position {
     let avg = new Position(0, 0, 0);
     for (let p of points) {
@@ -28,11 +39,12 @@ class Position {
     return avg;
   }
 
+  static get ORIGIN() {
+    return new Position(0, 0, 0);
+  }
+
   set(x: number, y: number, z: number): Position {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    return this;
+    return this.translate(x - this.x, y - this.y, z - this.z);
   }
 
   /**
@@ -40,7 +52,11 @@ class Position {
    * Returns this.
    */
   translate(x: number, y: number, z: number): Position {
-    return this.set(this.x + x, this.y + y, this.z + z);
+    for (let t of this.targets) t.translate(x, y, z);
+    this.x += x;
+    this.y += y;
+    this.z += z;
+    return this;
   }
 
   translateByVector(vec: Vector) {

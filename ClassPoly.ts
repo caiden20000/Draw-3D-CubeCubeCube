@@ -13,6 +13,9 @@ class Poly {
   public style: Style;
   constructor(public points: Point[] = []) {
     this.position = Position.fromPoints(points);
+    this.position.targets.concat(
+      Position.getPositionArrayFromPoints(this.points)
+    );
     this.rotation = new Rotation(
       this.position,
       Rotation.getRotationArrayFromPoints(this.points)

@@ -25,6 +25,9 @@ class Shape {
     this.rotation.targets.concat(
       Rotation.getRotationArrayFromPoints(poly.points)
     );
+    this.position.targets.concat(
+      Position.getPositionArrayFromPoints(poly.points)
+    );
   }
 
   updateColor() {

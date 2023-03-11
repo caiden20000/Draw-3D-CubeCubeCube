@@ -15,6 +15,39 @@ interface Positional {
   translate(Vector): Positional;
 }
 
+/**
+ * Position Component.
+ */
+class Position {
+  constructor(public x: number, public y: number, public z: number) {}
+  public toPoint = () => new Point(this.x, this.y, this.z);
+}
+
+/**
+ * Size Component.
+ * Currently x, y, z is unused.
+ */
+class Size {
+  public x: number;
+  public y: number
+  public z: number;
+  constructor (public value: number) {
+    this.x = value;
+    this.y = value;
+    this.z = value;
+  }
+}
+
+/**
+ * Rotation Component.
+ * Can only be implemented on an object with a Position component
+ * Must pass in the Position component upon initialization
+ */
+class Rotation {
+  public rotation: Angle;
+  constructor(public position: Position) {}
+}
+
 class PositionalObject implements Positional {
   constructor(public x, public y, public z) {}
 

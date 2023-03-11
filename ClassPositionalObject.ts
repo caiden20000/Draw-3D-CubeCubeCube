@@ -94,6 +94,12 @@ class Size {
   }
 }
 
+// Notes about Rotation:
+// I can't prove it yet, but I have a strong feeling that
+// a rotation about a pivot is IDENTICAL to
+// rotating about the center of all the points involved
+// and THEN translating the center of the points to the appropriate position.
+
 /**
  * Rotation Component.
  * Can only be implemented on an object with a Position component.
@@ -135,9 +141,7 @@ class Rotation {
     }
   }
 
-  // Quick note: Any rotation affects local rotation.
-  // It's just that local rotations don't affect position.
-  // local rotations are only comparative.
+  // Comparative local rotation
   _localRotate(axis: Axis, angle: Angle) {
     if (axis == Axis.X) this.xRotation.add(angle);
     if (axis == Axis.Y) this.yRotation.add(angle);
@@ -145,6 +149,7 @@ class Rotation {
     for (let r of this.targets) r.rotate(axis, angle, this.position);
   }
 
+  // Absolute local rotation
   _setLocalRotation(axis: Axis, angle: Angle) {
     let diffAngle: Angle;
     if (axis == Axis.X) diffAngle = angle.difference(this.xRotation);
@@ -153,29 +158,30 @@ class Rotation {
     this._localRotate(axis, diffAngle);
   }
 
+  // Rotation about a pivot
   setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
     this._setLocalRotation(axis, angle);
     if (!this.isLocalRotation(pivot)) {
-      let diff = this.position.getDifference(pivot);
-      let radius: number;
+      let radius = this.position.getDistance2D(axis, pivot);
       if (axis == Axis.X) {
-        radius = this.position.getDistance2D(axis, pivot);
-
+        this.position.y = pivot.y + radius * Math.cos(angle.radians);
+        this.position.z = pivot.z + radius * Math.sin(angle.radians);
+      } else if (axis == Axis.Y) {
+        this.position.x = pivot.x + radius * Math.cos(angle.radians);
+        this.position.z = pivot.z + radius * Math.sin(angle.radians);
+      } else if (axis == Axis.Z) {
+        this.position.x = pivot.x + radius * Math.cos(angle.radians);
+        this.position.y = pivot.y + radius * Math.sin(angle.radians);
       }
-
-
-
     }
-
     return this;
   }
 
   rotate(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
-
+    let currentAngle = this.getRotation(axis, pivot);
+    this.setRotation(axis, currentAngle.add(angle), pivot);
     return this;
   }
-
-
 }
 
 /**

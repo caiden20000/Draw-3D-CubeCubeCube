@@ -119,9 +119,9 @@ class Size {
  * Will rotate all Components in the list (useful for Poly, Shape)/
  */
 class Rotation {
-  public xRotation: Angle;
-  public yRotation: Angle;
-  public zRotation: Angle;
+  public xRotation: Angle = new Angle(0);
+  public yRotation: Angle = new Angle(0);
+  public zRotation: Angle = new Angle(0);
   // "targets" are any additional objects you want to rotate along with this.
   constructor(public position: Position, public targets: Rotation[] = []) {}
 

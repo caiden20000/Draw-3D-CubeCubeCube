@@ -17,6 +17,7 @@ import { Square } from './ClassSquare';
 import { Cube } from './ClassCube';
 import { Frustum } from './ClassFrustum';
 import { Renderable } from './ClassRenderable';
+import { Camera } from './ClassCamera';
 
 // Write TypeScript code!
 const appDiv: HTMLElement = document.getElementById('app');
@@ -84,15 +85,16 @@ const ctx = canvasElement.getContext('2d');
 // Test driving code //
 let canvas = new Canvas(canvasElement);
 canvas.setBackgroundColor(new Color(0, 0, 0));
+let camera = new Camera(canvas, Angle.fromDegrees(45));
 
-let q = new Square(new Point(75, 75, 300), 100);
+let q = new Square(75, 75, 300, 100);
 
 // let cube = new Cube(new Point(-100, -150, 300), 100);
 // cube.setColor(Color.BLUE());
 // cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 0.01; // todo changie after fixie
+var fps = 1; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -106,13 +108,13 @@ var turnSpeed = 5;
 
 setInterval(() => {
   // Reset canvas for new frame
-  canvas.clear();
+  camera.canvas.clear();
 
   // run key functions
 
   // Draw quad
-  q.style.setColor(Color.RED().lightParallel(Vector.PositiveY, q.getNormal(), 1));
-  renderQueue.addRenderable(q);
+  q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
+  renderQueue.addStageable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
   // cube.lightNormal(new Vector(1, 2, -2), 0.9);
@@ -136,8 +138,8 @@ setInterval(() => {
     renderQueue.translateCamera(new Vector(0, 0, walkSpeed));
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
-  q.drawNormal(renderQueue);
-  renderQueue.render(canvas);
+  // q.drawNormal(renderQueue);
+  renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
   // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));

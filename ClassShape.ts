@@ -16,7 +16,7 @@ class Shape {
   constructor(x: number, y: number, z: number) {
     this.position = new Position(x, y, z);
     this.rotation = new Rotation(this.position);
-    this.style = new Style(Color.BLUE(), Color.GREEN());
+    this.style = new Style(Color.BLUE, Color.GREEN);
     this.polys = [];
   }
 

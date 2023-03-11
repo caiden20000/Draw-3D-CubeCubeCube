@@ -1,4 +1,5 @@
 import { Camera } from './ClassCamera';
+import { Color } from './ClassColor';
 import { Point } from './ClassPoint';
 import { Renderable, RenderQueue } from './ClassRenderQueue';
 import { Vector } from './ClassVector';
@@ -16,6 +17,7 @@ class Poly {
       this.position,
       Rotation.getRotationArrayFromPoints(this.points)
     );
+    this.style = new Style(Color.RED);
   }
 
   stage(objects: Renderable[]) {

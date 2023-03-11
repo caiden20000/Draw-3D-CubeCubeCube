@@ -56,7 +56,7 @@ class Position {
   /**
    * Returns the distance in 2D on the plane orthogonal to the given axis
    */
-  getDistance2D(pos: Position, axis: Axis): number {
+  getDistance2D(axis: Axis, pos: Position): number {
     let diff = this.getDifference(pos);
     if (axis == Axis.X) return Math.sqrt(diff.y**2 + diff.z**2);
     if (axis == Axis.Y) return Math.sqrt(diff.x**2 + diff.z**2);
@@ -100,13 +100,14 @@ class Size {
  * Must pass in the Position component upon initialization.
  * Will rotate about any axis.
  * Keeps track of rotations done on the position of the object.
- * Will rotate all Position Components in the list (useful for Poly, Shape)/
+ * Will rotate all Components in the list (useful for Poly, Shape)/
  */
 class Rotation {
   public xRotation: Angle;
   public yRotation: Angle;
   public zRotation: Angle;
-  constructor(public position: Position, public targets: Position[] = []) {}
+  // "targets" are any additional objects you want to rotate along with this.
+  constructor(public position: Position, public targets: Rotation[] = []) {}
 
   /**
    * Rotations with this position as the pivot affects the
@@ -137,18 +138,41 @@ class Rotation {
   // Quick note: Any rotation affects local rotation.
   // It's just that local rotations don't affect position.
   // local rotations are only comparative.
-  _localRotation(axis: Axis, angle: Angle) {
-    let diffAngle: Angle;
-    if (axis == Axis.X) {
-      diffAngle
-      this.xRotation = angle;
-    }
+  _localRotate(axis: Axis, angle: Angle) {
+    if (axis == Axis.X) this.xRotation.add(angle);
+    if (axis == Axis.Y) this.yRotation.add(angle);
+    if (axis == Axis.Z) this.zRotation.add(angle);
+    for (let r of this.targets) r.rotate(axis, angle, this.position);
   }
 
-  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position) {
-    if (this.isLocalRotation(pivot)) {
-      if (axis == Axis.X) this.xRotation = angle;
+  _setLocalRotation(axis: Axis, angle: Angle) {
+    let diffAngle: Angle;
+    if (axis == Axis.X) diffAngle = angle.difference(this.xRotation);
+    if (axis == Axis.Y) diffAngle = angle.difference(this.yRotation);
+    if (axis == Axis.Z) diffAngle = angle.difference(this.zRotation);
+    this._localRotate(axis, diffAngle);
+  }
+
+  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+    this._setLocalRotation(axis, angle);
+    if (!this.isLocalRotation(pivot)) {
+      let diff = this.position.getDifference(pivot);
+      let radius: number;
+      if (axis == Axis.X) {
+        radius = this.position.getDistance2D(axis, pivot);
+
+      }
+
+
+
     }
+
+    return this;
+  }
+
+  rotate(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+
+    return this;
   }
 
 
@@ -191,7 +215,7 @@ class PositionalObject implements Positional {
     let diff = this._getAxisDiff(pivot, axis);
     let radius = Math.sqrt(diff.dx ** 2 + diff.dy ** 2);
     let newX = pivot.x + radius * Math.cos(angle.radians);
-    let newY = pivot.x + radius * Math.sin(angle.radians);
+    let newY = pivot.y + radius * Math.sin(angle.radians);
     if (axis == Axis.X) {
       this.y = newX;
       this.z = newY;

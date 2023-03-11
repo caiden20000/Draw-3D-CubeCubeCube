@@ -2,6 +2,7 @@ import { Vector } from './ClassVector';
 import { Color } from './ClassColor';
 import { Position, Rotation, Style } from './Components';
 import { Poly } from './ClassPoly';
+import { Renderable } from './ClassRenderQueue';
 
 export { Shape };
 
@@ -21,7 +22,9 @@ class Shape {
 
   addPoly(poly: Poly) {
     this.polys.push(poly);
-    this.rotation.targets.concat(Rotation.getRotationArrayFromPoints(poly.points));
+    this.rotation.targets.concat(
+      Rotation.getRotationArrayFromPoints(poly.points)
+    );
   }
 
   updateColor() {
@@ -49,7 +52,7 @@ class Shape {
   }
 
   stage(objects: Renderable[]) {
-
+    for (let p of this.polys) p.stage(objects);
   }
 
   // drawNormals(renderQueue: RenderQueue) {

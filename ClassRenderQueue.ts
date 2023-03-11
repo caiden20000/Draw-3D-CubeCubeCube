@@ -7,7 +7,7 @@ import { Axis } from './EnumAxis';
 import { Position, Rotation, Style } from './Components';
 import { Camera } from './ClassCamera';
 
-export { RenderQueue };
+export { RenderQueue, Stageable, Renderable };
 
 interface Stageable {
   stage(objects: Renderable[]);
@@ -61,6 +61,11 @@ class RenderQueue {
   clearRenderQueue() {
     this.stagingQueue = [];
     this.renderQueue = [];
+  }
+
+  // Call before rendering
+  stage() {
+    for (let r of this.stagingQueue) r.stage(this.renderQueue);
   }
 
   // Draws all Drawable in renderQueue in order

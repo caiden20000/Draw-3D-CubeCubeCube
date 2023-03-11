@@ -8,22 +8,13 @@ export { Canvas };
 
 class Canvas {
   public ctx: CanvasRenderingContext2D;
-  public screen: Frustum;
   public backgroundColor: Color = new Color(0, 0, 0);
   public width;
   public height;
-  constructor(
-    public canvasElement: HTMLCanvasElement,
-    public fov: Angle = Angle.fromDegrees(90)
-  ) {
+  constructor(public canvasElement: HTMLCanvasElement) {
     this.width = canvasElement.width;
     this.height = canvasElement.height;
-    this.screen = new Frustum(this.width, this.height, fov, fov);
     this.ctx = canvasElement.getContext('2d');
-    // Set origin in center
-    this.ctx.translate(this.screen.xDom, this.screen.yDom);
-    // Also make positive y go up
-    this.ctx.scale(1, -1);
   }
 
   clear() {
@@ -56,6 +47,7 @@ class Canvas {
     );
   }
 
+  // TODO
   drawArrowHead(point: Point, vec: Vector, size: number) {
     this.ctx.beginPath();
   }

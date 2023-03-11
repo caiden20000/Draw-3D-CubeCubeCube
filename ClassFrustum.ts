@@ -2,6 +2,7 @@ import { Angle } from './ClassAngle';
 import { Point } from './ClassPoint';
 import { Vector } from './ClassVector';
 import { Quad } from './ClassQuad';
+import { Position } from './Components';
 
 export { Frustum };
 
@@ -35,11 +36,11 @@ class Frustum {
     return new Vector(this.xDom + dx, this.yDom + dy, z);
   }
 
-  projectPoint(p: Point): Point {
+  projectPosition(p: Position): Position {
     let pDom = this.getDomAtZ(p.z);
     //console.log(pDom);
     // Normalize point position with (p.x / pDom.x), then project by multiplying this.xDom
-    let projected = new Point(
+    let projected = new Position(
       (p.x * this.xDom) / pDom.x,
       (p.y * this.yDom) / pDom.y,
       0
@@ -47,16 +48,7 @@ class Frustum {
     return projected;
   }
 
-  projectQuad(quad: Quad): Quad {
-    let proj1 = this.projectPoint(quad.p1);
-    let proj2 = this.projectPoint(quad.p2);
-    let proj3 = this.projectPoint(quad.p3);
-    let proj4 = this.projectPoint(quad.p4);
-    let projQuad = new Quad(proj1, proj2, proj3, proj4);
-    return projQuad;
-  }
-
-  isPointInFrustum(p: Point): boolean {
+  isPositionInFrustum(p: Position): boolean {
     if (p.z < 0) return false;
     let pDom = this.getDomAtZ(p.z);
     if (Math.abs(p.x) <= pDom.x && Math.abs(p.y) <= pDom.y) return true;
@@ -64,9 +56,9 @@ class Frustum {
   }
 
   // Returns true if 1 or more points of quad is in frustum
-  isQuadInFrustum(quad: Quad): boolean {
+  isPolyInFrustum(quad: Quad): boolean {
     for (let p of quad.points) {
-      if (this.isPointInFrustum(p)) return true;
+      if (this.isPositionInFrustum(p.position)) return true;
     }
     return false;
   }

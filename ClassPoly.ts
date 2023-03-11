@@ -1,9 +1,10 @@
 import { Angle } from './ClassAngle';
+import { Camera } from './ClassCamera';
 import { Canvas } from './ClassCanvas';
 import { Point } from './ClassPoint';
 import { Renderable } from './ClassRenderable';
 import { Vector } from './ClassVector';
-import { Position, Rotation } from './Components';
+import { Position, Rotation, Style } from './Components';
 import { Axis } from './EnumAxis';
 
 export { Poly };
@@ -11,23 +12,28 @@ export { Poly };
 class Poly {
   public position: Position;
   public rotation: Rotation;
+  public style: Style;
   constructor(public points: Point[] = []) {
     this.position = Position.fromPoints(points);
-    this.rotation = new Rotation(this.position, Rotation.getRotationArrayFromPoints(this.points));
+    this.rotation = new Rotation(
+      this.position,
+      Rotation.getRotationArrayFromPoints(this.points)
+    );
   }
 
-  draw(canvas: Canvas) {
-    let projectedPoints: Point[] = [];
+  draw(camera: Camera) {
+    let projectedPositions: Position[] = [];
+    let ctx = camera.canvas.ctx;
     for (let p of this.points)
-      projectedPoints.push(canvas.screen.projectPoint(p));
+      projectedPositions.push(camera.frustum.projectPosition(p.position));
 
-    this.applyColor(canvas);
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(projectedPoints[0].x, projectedPoints[0].y);
-    for (let pp of projectedPoints) canvas.ctx.lineTo(pp.x, pp.y);
-    canvas.ctx.closePath();
-    canvas.ctx.fill();
-    canvas.ctx.stroke();
+    this.style.applyColor(camera.canvas);
+    ctx.beginPath();
+    ctx.moveTo(projectedPositions[0].x, projectedPositions[0].y);
+    for (let pp of projectedPositions) ctx.lineTo(pp.x, pp.y);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
   }
 
   /**

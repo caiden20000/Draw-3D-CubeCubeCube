@@ -3,81 +3,17 @@ import { Canvas } from './ClassCanvas';
 import { Point } from './ClassPoint';
 import { Renderable } from './ClassRenderable';
 import { Vector } from './ClassVector';
+import { Position, Rotation } from './Components';
 import { Axis } from './EnumAxis';
 
 export { Poly };
 
-class Poly extends Renderable {
-  public rotation: Angle;
+class Poly {
+  public position: Position;
+  public rotation: Rotation;
   constructor(public points: Point[] = []) {
-    //if (points.length < 3) return;
-    super(0, 0, 0);
-    let center = this._determineCenter();
-    this.x = center.x;
-    this.y = center.y;
-    this.z = center.z;
-    this.rotation = new Angle(0);
-  }
-
-  _determineCenter(): Point {
-    let avg = new Point(0, 0, 0);
-    for (let p of this.points) {
-      avg.x += p.x;
-      avg.y += p.y;
-      avg.z += p.z;
-    }
-    let numberOfPoints = this.points.length;
-    avg.x /= numberOfPoints;
-    avg.y /= numberOfPoints;
-    avg.z /= numberOfPoints;
-    return avg;
-  }
-
-  getCenter() {
-    return new Point(this.x, this.y, this.z);
-  }
-
-  // TODO: The rotation bitty ain't workin here
-  // fixie fixie
-
-  getRotation(pivot: Point, axis: Axis) {
-    if (pivot.equals(this.getCenter())) return this.rotation;
-    return super.getRotation(pivot, axis);
-  }
-
-  setRotation(pivot: Point, axis: Axis, angle: Angle) {
-    //if (pivot.equals(this.getCenter())) this.rotation = angle;
-    for (let p of this.points) p.rotate(pivot, axis, angle);
-    return super.setRotation(pivot, axis, angle);
-  }
-
-  rotate(pivot: Point, axis: Axis, angle: Angle) {
-    if (pivot.equals(this.getCenter())) {
-      return super.rotate(pivot, axis, this.rotation.add(angle));
-    }
-    return super.rotate(pivot, axis, angle);
-  }
-
-  getPosition() {
-    return super.getPosition();
-  }
-
-  setPosition(point: Point) {
-    let diff = this.getCenter().getDiff(point);
-    for (let p of this.points) p.translate(diff.toVector());
-    this.x = point.x;
-    this.y = point.y;
-    this.z = point.z;
-
-    return this;
-  }
-
-  translate(vec: Vector) {
-    for (let p of this.points) p.translate(vec);
-    this.x += vec.x;
-    this.y += vec.y;
-    this.z += vec.z;
-    return this;
+    this.position = Position.fromPoints(points);
+    this.rotation = new Rotation(this.position, Rotation.getRotationArrayFromPoints(this.points));
   }
 
   draw(canvas: Canvas) {

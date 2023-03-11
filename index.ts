@@ -92,7 +92,7 @@ let q = new Square(new Point(75, 75, 300), 100);
 // cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 0; // todo changie after fixie
+var fps = 0.01; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {

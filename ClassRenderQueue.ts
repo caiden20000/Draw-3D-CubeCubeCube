@@ -3,16 +3,21 @@ import { Angle } from './ClassAngle';
 import { Vector } from './ClassVector';
 import { Point } from './ClassPoint';
 import { Canvas } from './ClassCanvas';
-import { Renderable } from './ClassRenderable';
-import { Positional } from './ClassPositionalObject';
 import { Axis } from './EnumAxis';
+import { Position, Rotation, Style } from './Components';
+import { Camera } from './ClassCamera';
 
 export { RenderQueue };
 
+interface Renderable {
+  position: Position;
+  rotation: Rotation;
+  style: Style;
+  draw(camera: Camera): void;
+}
+
 class RenderQueue {
   public renderQueue: Renderable[];
-  public shapeList: Shape[];
-  public simpleList: Positional[];
   constructor() {
     this.renderQueue = [];
     this.shapeList = [];

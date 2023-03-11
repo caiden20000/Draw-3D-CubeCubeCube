@@ -1,6 +1,7 @@
 import { Point } from './ClassPoint';
 import { Angle } from './ClassAngle';
 import { PositionalObject } from './ClassPositionalObject';
+import { Position } from './Components';
 
 export { Vector };
 
@@ -125,7 +126,7 @@ class Vector extends PositionalObject {
     return new Angle(rad);
   }
 
-  static fromPoints(p1: Point, p2: Point): Vector {
+  static fromPositions(p1: Position, p2: Position): Vector {
     let dx = p2.x - p1.x;
     let dy = p2.y - p1.y;
     let dz = p2.z - p1.z;

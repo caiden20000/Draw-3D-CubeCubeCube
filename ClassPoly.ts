@@ -28,6 +28,7 @@ class Poly {
   }
 
   draw(camera: Camera) {
+    //console.log(this.points);
     let projectedPositions: Position[] = [];
     let ctx = camera.canvas.ctx;
     for (let p of this.points)

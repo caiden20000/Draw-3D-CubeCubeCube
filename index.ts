@@ -42,7 +42,7 @@ let splashText: string[] = [
   'Kneads the dough!',
   'NEEDS THE DOUGH!',
   'MONTE!!',
-  'Coding challenge: Don\'t!',
+  "Coding challenge: Don't!",
   'no u',
   'umadbro?',
   'Rails: off',
@@ -100,7 +100,16 @@ document.getElementsByTagName('html')[0].onkeyup = (e) => {
 var walkSpeed = 10;
 var turnSpeed = 5;
 
-setInterval(() => {
+var stepThrough = true;
+if (stepThrough) {
+  document.onkeydown = (e: KeyboardEvent) => {
+    if (e.key == ' ') frame();
+  };
+} else {
+  var interval = setInterval(frame, 1000 / fps);
+}
+
+var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
 
@@ -137,6 +146,6 @@ setInterval(() => {
   renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-
+  q.position.translate(10, 10, 0);
   //q.rotation.rotate(Axis.Z, Angle.fromDegrees(1), q.position);
-}, 1000 / fps);
+};

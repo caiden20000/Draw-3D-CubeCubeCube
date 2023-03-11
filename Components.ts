@@ -59,7 +59,7 @@ class Position {
     return this;
   }
 
-  translateByVector(vec: Vector) {
+  translateByVector(vec: Vector): Position {
     return this.translate(vec.x, vec.y, vec.z);
   }
 

@@ -1,8 +1,10 @@
 import { Angle } from './ClassAngle';
+import { Canvas } from './ClassCanvas';
+import { Color } from './ClassColor';
 import { Point } from './ClassPoint';
 import { Axis } from './EnumAxis';
 
-export { Position, Size, Rotation };
+export { Position, Size, Rotation, Style };
 
 /**
  * Position Component.
@@ -12,9 +14,9 @@ class Position {
   static fromPoints(points: Point[]): Position {
     let avg = new Position(0, 0, 0);
     for (let p of points) {
-      avg.x += p.x;
-      avg.y += p.y;
-      avg.z += p.z;
+      avg.x += p.position.x;
+      avg.y += p.position.y;
+      avg.z += p.position.z;
     }
     avg.x /= points.length;
     avg.y /= points.length;
@@ -114,7 +116,7 @@ class Rotation {
   public zRotation: Angle;
   // "targets" are any additional objects you want to rotate along with this.
   constructor(public position: Position, public targets: Rotation[] = []) {}
-  
+
   static getRotationArrayFromPoints(points: Point[]): Rotation[] {
     let result: Rotation[] = [];
     for (let p of points) result.push(p.rotation);
@@ -197,3 +199,37 @@ class Rotation {
  * Display Component.
  */
 class Display {}
+
+/**
+ * Style component.
+ * Holds the fill and stroke colors.
+ * Call applyColor(canvas) to load the colors up before drawing.
+ */
+class Style {
+  constructor(public fillColor: Color, public strokeColor: Color = fillColor) {}
+
+  setColor(color: Color) {
+    this.fillColor = color;
+    this.strokeColor = color;
+  }
+
+  getStrokeColor(): Color {
+    return this.strokeColor;
+  }
+
+  setStrokeColor(strokeColor: Color) {
+    this.strokeColor = strokeColor;
+  }
+
+  getFillColor(): Color {
+    return this.fillColor;
+  }
+
+  setFillColor(fillColor: Color) {
+    this.fillColor = fillColor;
+  }
+
+  applyColor(canvas: Canvas) {
+    canvas.setColor(this.fillColor, this.strokeColor);
+  }
+}

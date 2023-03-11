@@ -92,7 +92,7 @@ let q = new Square(new Point(75, 75, 300), 100);
 // cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 30;
+var fps = 0; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -146,63 +146,3 @@ setInterval(() => {
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);
-
-// TODO: method to get rotation of a quad or shapee
-
-// TODO: There needs to be a structure where all instantiated objects are added to a superArray,
-//       and this can be used for "camera movement" as well as rendering.
-
-// TODO: Uh oh, quaternions.
-//       Basically, if we rotate everything in the scene to rotate the camera, then we have to have quaternion based rotation
-
-// TODO: Coordinate pipeline
-// Right now we have world space -> screen space
-// Rotating all of the objects instead of rotating the camera is
-// NOT sustainable, as something rotating on an axis will rotate on
-// the new axis after rotation.
-// SO we want a coordinate pipeline that goes
-// WorldSpace -> CameraSpace -> ScreenSpace
-// ie, all points in space are already stored in WorldSpace
-// but now we add a CameraSpace layer where things are
-// rotated and translated with respect to the camera.
-// Maybe a new type of object can be used, called
-// CameraSpaceObject
-// that can encapsulate a Renderable
-// and has the methods to calculate and store camera space.
-
-// TODO new paradigm:
-//      any method that modifies the object must return the object
-//      for chaining purposes.
-//      ie so we can do "return angle.rotate(x);"
-//      instead of "angle.rotate(x); return angle;"
-//    Right now its a mess, half of the methods do and half don't.
-
-// TODO new paradigm:
-//      NO get/set getters and setters.
-//      only explicit method getSomething() and setSomething().
-
-// TODO: replace Positional interface with this
-
-// Renderable encapsulator
-// keeps a reference to a Renderable object to
-// calculate and store the camera space position.
-// The storage is important for optimization.
-// class CameraSpaceRenderable {
-//   constructor(public object: Renderable, public camera: Camera) {}
-// }
-
-// class ScreenSpaceRenderable {
-//   public frustum: Frustum;
-//   constructor(public object: CameraSpaceRenderable, public canvas: Canvas) {
-//     this.frustum = object.camera.frustum;
-//   }
-// }
-
-/**
- * The structure of the rendering pipeline:
- * Points have x, y, z
- * Everything renderable has points
- * Points get converted into camera space via Camera
- * Points get converted from camera space to Screen space via Screen
- * points get drawn on screen
- */

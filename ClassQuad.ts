@@ -15,10 +15,4 @@ class Quad extends Poly {
     let points = [p1, p2, p3, p4];
     super(points);
   }
-
-  drawNormal(renderQueue: RenderQueue) {
-    renderQueue.addRenderable(
-      DrawableVector.fromVector(this.getCenter(), this.getNormal())
-    );
-  }
 }

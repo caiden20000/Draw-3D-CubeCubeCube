@@ -1,11 +1,9 @@
-import { Angle } from './ClassAngle';
 import { Camera } from './ClassCamera';
-import { Canvas } from './ClassCanvas';
+import { DrawableVector } from './ClassDrawableVector';
 import { Point } from './ClassPoint';
-import { Renderable } from './ClassRenderable';
+import { RenderQueue } from './ClassRenderQueue';
 import { Vector } from './ClassVector';
 import { Position, Rotation, Style } from './Components';
-import { Axis } from './EnumAxis';
 
 export { Poly };
 
@@ -50,4 +48,10 @@ class Poly {
     //n.invert();
     return n;
   }
+
+  // drawNormal(renderQueue: RenderQueue) {
+  //   renderQueue.addRenderable(
+  //     DrawableVector.fromVector(this.getCenter(), this.getNormal())
+  //   );
+  // }
 }

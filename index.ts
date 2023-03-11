@@ -82,7 +82,7 @@ const ctx = canvasElement.getContext('2d');
 // like, uh, a dice
 
 // Test driving code //
-let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
+let canvas = new Canvas(canvasElement);
 canvas.setBackgroundColor(new Color(0, 0, 0));
 
 let q = new Square(new Point(75, 75, 300), 100);
@@ -111,7 +111,7 @@ setInterval(() => {
   // run key functions
 
   // Draw quad
-  q.setColor(Color.RED().lightParallel(Vector.PositiveY, q.getNormal(), 1));
+  q.style.setColor(Color.RED().lightParallel(Vector.PositiveY, q.getNormal(), 1));
   renderQueue.addRenderable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
@@ -142,7 +142,7 @@ setInterval(() => {
   // Code that will modify the positon, rotation, scale, etc of objects:
   // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
 
-  q.rotate(q.getCenter(), Axis.X, Angle.fromDegrees(1));
+  q.rotation.rotate(Axis.X, Angle.fromDegrees(1), q.position);
   //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
   //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
 }, 1000 / fps);

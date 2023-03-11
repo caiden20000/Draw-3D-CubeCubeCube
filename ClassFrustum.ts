@@ -1,5 +1,4 @@
 import { Angle } from './ClassAngle';
-import { Point } from './ClassPoint';
 import { Vector } from './ClassVector';
 import { Quad } from './ClassQuad';
 import { Position } from './Components';

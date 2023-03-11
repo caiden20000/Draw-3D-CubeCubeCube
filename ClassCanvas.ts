@@ -1,8 +1,6 @@
 import { Color } from './ClassColor';
-import { Angle } from './ClassAngle';
 import { Point } from './ClassPoint';
 import { Vector } from './ClassVector';
-import { Frustum } from './ClassFrustum';
 
 export { Canvas };
 

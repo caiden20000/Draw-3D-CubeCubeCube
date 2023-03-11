@@ -1,7 +1,6 @@
 import { Camera } from './ClassCamera';
-import { DrawableVector } from './ClassDrawableVector';
 import { Point } from './ClassPoint';
-import { RenderQueue } from './ClassRenderQueue';
+import { Renderable, RenderQueue } from './ClassRenderQueue';
 import { Vector } from './ClassVector';
 import { Position, Rotation, Style } from './Components';
 
@@ -17,6 +16,10 @@ class Poly {
       this.position,
       Rotation.getRotationArrayFromPoints(this.points)
     );
+  }
+
+  stage(objects: Renderable[]) {
+    objects.push(this);
   }
 
   draw(camera: Camera) {
@@ -39,10 +42,13 @@ class Poly {
    */
   getNormal(): Vector {
     if (this.points.length < 3) return new Vector(0, 0, 0);
-    let v1 = Vector.fromPoints(this.points[0], this.points[1]);
-    let v2 = Vector.fromPoints(
-      this.points[0],
-      this.points[this.points.length - 1]
+    let v1 = Vector.fromPositions(
+      this.points[0].position,
+      this.points[1].position
+    );
+    let v2 = Vector.fromPositions(
+      this.points[0].position,
+      this.points[this.points.length - 1].position
     );
     let n = Vector.crossProduct(v1, v2);
     //n.invert();

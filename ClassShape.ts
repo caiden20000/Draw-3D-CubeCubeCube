@@ -1,15 +1,7 @@
-import { Point } from './ClassPoint';
 import { Vector } from './ClassVector';
-import { Angle } from './ClassAngle';
-import { Canvas } from './ClassCanvas';
-import { Quad } from './ClassQuad';
 import { Color } from './ClassColor';
-import { RenderQueue } from './ClassRenderQueue';
-import { Renderable } from './ClassRenderable';
-import { Axis } from './EnumAxis';
 import { Position, Rotation, Style } from './Components';
 import { Poly } from './ClassPoly';
-import { Camera } from './ClassCamera';
 
 export { Shape };
 
@@ -56,8 +48,8 @@ class Shape {
     }
   }
 
-  draw(camera: Camera) {
-    for (let poly of this.polys) poly.draw(camera);
+  stage(objects: Renderable[]) {
+
   }
 
   // drawNormals(renderQueue: RenderQueue) {

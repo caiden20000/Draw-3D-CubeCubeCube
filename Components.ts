@@ -2,6 +2,7 @@ import { Angle } from './ClassAngle';
 import { Canvas } from './ClassCanvas';
 import { Color } from './ClassColor';
 import { Point } from './ClassPoint';
+import { Vector } from './ClassVector';
 import { Axis } from './EnumAxis';
 
 export { Position, Size, Rotation, Style };
@@ -10,6 +11,9 @@ export { Position, Size, Rotation, Style };
  * Position Component.
  */
 class Position {
+  static get ORIGIN() {
+    return new Position(0, 0, 0);
+  }
   constructor(public x: number, public y: number, public z: number) {}
   static fromPoints(points: Point[]): Position {
     let avg = new Position(0, 0, 0);
@@ -37,6 +41,10 @@ class Position {
    */
   translate(x: number, y: number, z: number): Position {
     return this.set(this.x + x, this.y + y, this.z + z);
+  }
+
+  translateByVector(vec: Vector) {
+    return this.translate(vec.x, vec.y, vec.z);
   }
 
   /**
@@ -166,7 +174,11 @@ class Rotation {
   }
 
   // Rotation about a pivot
-  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+  setRotation(
+    axis: Axis,
+    angle: Angle,
+    pivot: Position = this.position
+  ): Rotation {
     this._setLocalRotation(axis, angle);
     if (!this.isLocalRotation(pivot)) {
       let radius = this.position.getDistance2D(axis, pivot);

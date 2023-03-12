@@ -13,14 +13,22 @@ class Poly {
   public style: Style;
   constructor(public points: Point[] = []) {
     this.position = Position.fromPoints(points);
-    this.position.targets.concat(
-      Position.getPositionArrayFromPoints(this.points)
+    this.position.targets.push(
+      ...Position.getPositionArrayFromPoints(this.points)
     );
-    this.rotation = new Rotation(
-      this.position,
-      Rotation.getRotationArrayFromPoints(this.points)
+    console.log(this.position.targets);
+    this.rotation = new Rotation(this.position);
+    this.rotation.targets.push(
+      ...Rotation.getRotationArrayFromPoints(this.points)
     );
     this.style = new Style(Color.RED);
+  }
+
+  // Try to do it in a counter-clockwise fashion, yes?
+  addPoint(point: Point) {
+    this.points.push(point);
+    this.position.targets.push(point.position);
+    this.rotation.targets.push(point.rotation);
   }
 
   stage(objects: Renderable[]) {
@@ -28,7 +36,8 @@ class Poly {
   }
 
   draw(camera: Camera) {
-    //console.log(this.points);
+    console.log(this.position.targets);
+    console.log(this.points[0].position);
     let projectedPositions: Position[] = [];
     let ctx = camera.canvas.ctx;
     for (let p of this.points)

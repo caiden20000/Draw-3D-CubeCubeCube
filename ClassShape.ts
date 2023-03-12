@@ -22,11 +22,11 @@ class Shape {
 
   addPoly(poly: Poly) {
     this.polys.push(poly);
-    this.rotation.targets.concat(
-      Rotation.getRotationArrayFromPoints(poly.points)
+    this.rotation.targets.push(
+      ...Rotation.getRotationArrayFromPoints(poly.points)
     );
-    this.position.targets.concat(
-      Position.getPositionArrayFromPoints(poly.points)
+    this.position.targets.push(
+      ...Position.getPositionArrayFromPoints(poly.points)
     );
   }
 

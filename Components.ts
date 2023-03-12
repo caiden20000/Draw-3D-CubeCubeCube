@@ -179,10 +179,14 @@ class Rotation {
     for (let t of this.targets) t.rotate(axis, angle, this.position);
   }
 
+  // TODO: WHY do I have to invert cos & sin?
+  // It doesn't make sense to me! I tried it on a whim and it blumming worked!
+  // That's the worst!
+  // Don't change.
   _setTranslationAboutPivot(axis: Axis, angle: Angle, pivot: Position) {
     let radius = this.position.getDistance2D(axis, pivot);
-    let cos = Math.cos(angle.radians);
-    let sin = Math.sin(angle.radians);
+    let cos = -Math.cos(angle.radians);
+    let sin = -Math.sin(angle.radians);
     if (axis == Axis.X) {
       this.position.set(
         this.position.x,

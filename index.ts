@@ -83,9 +83,9 @@ let camera = new Camera(canvas, Angle.fromDegrees(45));
 
 let q = new Square(75, 75, 300, 100);
 
-// let cube = new Cube(new Point(-100, -150, 300), 100);
-// cube.setColor(Color.BLUE());
-// cube.updateColor();
+let cube = new Cube(-100, -150, 300, 100);
+cube.style.setColor(Color.BLUE);
+cube.updateColor();
 
 var renderQueue = new RenderQueue();
 var fps = 30; // todo changie after fixie
@@ -101,7 +101,7 @@ var walkSpeed = 10;
 var turnSpeed = 5;
 
 var interval;
-var stepThrough = true;
+var stepThrough = false;
 if (stepThrough) {
   document.onkeydown = (e: KeyboardEvent) => {
     if (e.key == ' ') frame();
@@ -121,8 +121,8 @@ var frame = () => {
   renderQueue.addStageable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
-  // cube.lightNormal(new Vector(1, 2, -2), 0.9);
-  // renderQueue.addShape(cube);
+  cube.lightNormal(new Vector(1, 2, -2), 0.9);
+  renderQueue.addStageable(cube);
 
   //cube.drawNormals(renderQueue);
 
@@ -148,7 +148,7 @@ var frame = () => {
   renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  //q.position.translate(10, 10, 0);
-  console.log(q.points[0].position.z);
+  //console.log(q.points[0].position.z);
   q.rotation.rotate(Axis.X, Angle.fromDegrees(10));
+  cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
 };

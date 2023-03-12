@@ -19,6 +19,7 @@ import { Frustum } from './ClassFrustum';
 import { Renderable } from './ClassRenderable';
 import { Camera } from './ClassCamera';
 import { DrawableVector } from './ClassDrawableVector';
+import { Position } from './Components';
 
 // Write TypeScript code!
 const appDiv: HTMLElement = document.getElementById('app');
@@ -152,7 +153,7 @@ var frame = () => {
 
   // Code that will modify the positon, rotation, scale, etc of objects:
   //console.log(q.points[0].position.z);
-  q.rotation.rotate(Axis.X, Angle.fromDegrees(10));
+  q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 };

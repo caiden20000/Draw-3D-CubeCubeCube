@@ -18,6 +18,7 @@ import { Cube } from './ClassCube';
 import { Frustum } from './ClassFrustum';
 import { Renderable } from './ClassRenderable';
 import { Camera } from './ClassCamera';
+import { DrawableVector } from './ClassDrawableVector';
 
 // Write TypeScript code!
 const appDiv: HTMLElement = document.getElementById('app');
@@ -101,7 +102,7 @@ var walkSpeed = 10;
 var turnSpeed = 5;
 
 var interval;
-var stepThrough = true;
+var stepThrough = false;
 if (stepThrough) {
   document.onkeydown = (e: KeyboardEvent) => {
     if (e.key == ' ') frame();
@@ -124,7 +125,7 @@ var frame = () => {
   cube.lightNormal(new Vector(1, 2, -2), 0.9);
   renderQueue.addStageable(cube);
 
-  //cube.drawNormals(renderQueue);
+  renderQueue.addStageable(DrawableVector.asNormal(q));
 
   // Renders all objects in a certain order
   renderQueue.stage();

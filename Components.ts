@@ -95,6 +95,10 @@ class Position {
   equals(pos: Position): boolean {
     return pos.x == this.x && pos.y == this.y && pos.z == this.z;
   }
+
+  toPoint(): Point {
+    return new Point(this.x, this.y, this.z);
+  }
 }
 
 /**

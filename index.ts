@@ -101,7 +101,7 @@ var walkSpeed = 10;
 var turnSpeed = 5;
 
 var interval;
-var stepThrough = false;
+var stepThrough = true;
 if (stepThrough) {
   document.onkeydown = (e: KeyboardEvent) => {
     if (e.key == ' ') frame();

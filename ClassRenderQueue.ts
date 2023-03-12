@@ -51,11 +51,19 @@ class RenderQueue {
 
   // Currently the best
   sortQueueByDistanceToOrigin() {
+    let str = "";
+    for (let r of this.renderQueue) str += r.position.z + " : ";
+    console.log(str);
+
     this.renderQueue.sort(
       (a, b) =>
         b.position.getDistance(Position.ORIGIN) -
         a.position.getDistance(Position.ORIGIN)
     );
+    
+    str = "";
+    for (let r of this.renderQueue) str += r.position.z + " : ";
+    console.log(str);
   }
 
   clearRenderQueue() {
@@ -72,6 +80,9 @@ class RenderQueue {
   // Clears the renderQueue, add things every frame!
   render(camera: Camera) {
     this.sortQueueByDistanceToOrigin();
+    // for (let i=0; i<this.renderQueue.length; i++) {
+    //   this.renderQueue[i].draw(camera);
+    // }
     for (let r of this.renderQueue) r.draw(camera);
     this.clearRenderQueue();
   }

@@ -63,7 +63,7 @@ class Poly {
       this.points[this.points.length - 1].position
     );
     let n = Vector.crossProduct(v1, v2);
-    //n.invert();
+    n.invert();
     return n;
   }
 

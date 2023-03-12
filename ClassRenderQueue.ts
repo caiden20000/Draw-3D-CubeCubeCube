@@ -51,19 +51,12 @@ class RenderQueue {
 
   // Currently the best
   sortQueueByDistanceToOrigin() {
-    let str = "";
-    for (let r of this.renderQueue) str += r.position.z + " : ";
-    console.log(str);
 
     this.renderQueue.sort(
       (a, b) =>
         b.position.getDistance(Position.ORIGIN) -
         a.position.getDistance(Position.ORIGIN)
     );
-    
-    str = "";
-    for (let r of this.renderQueue) str += r.position.z + " : ";
-    console.log(str);
   }
 
   clearRenderQueue() {

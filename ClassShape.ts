@@ -22,12 +22,15 @@ class Shape {
 
   addPoly(poly: Poly) {
     this.polys.push(poly);
-    this.rotation.targets.push(
-      ...Rotation.getRotationArrayFromPoints(poly.points)
-    );
-    this.position.targets.push(
-      ...Position.getPositionArrayFromPoints(poly.points)
-    );
+    this.rotation.targets.push(poly.rotation);
+    this.position.targets.push(poly.position);
+
+    // this.rotation.targets.push(
+    //   ...Rotation.getRotationArrayFromPoints(poly.points)
+    // );
+    // this.position.targets.push(
+    //   ...Position.getPositionArrayFromPoints(poly.points)
+    // );
   }
 
   updateColor() {

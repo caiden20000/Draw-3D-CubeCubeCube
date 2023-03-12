@@ -1,11 +1,14 @@
 import { Color } from './ClassColor';
+import { DrawablePoint } from './ClassDrawablePoint';
 import { Point } from './ClassPoint';
 import { Poly } from './ClassPoly';
+import { Renderable } from './ClassRenderQueue';
 import { Vector } from './ClassVector';
 
 export { DrawableVector };
 
 class DrawableVector extends Poly {
+  public tipVisible: boolean = true;
   constructor(public origin: Point, public tip: Point) {
     super([origin, tip]);
     this.style.setColor(Color.GREEN);
@@ -25,5 +28,15 @@ class DrawableVector extends Poly {
 
   getVector(): Vector {
     return Vector.fromPositions(this.origin.position, this.tip.position);
+  }
+
+  drawTip(tipVisible: boolean): DrawableVector {
+    this.tipVisible = tipVisible;
+    return this;
+  }
+
+  stage(objects: Renderable[]) {
+    objects.push(this);
+    if (this.tipVisible) objects.push(new DrawablePoint(this.tip));
   }
 }

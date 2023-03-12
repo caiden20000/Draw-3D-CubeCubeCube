@@ -126,6 +126,8 @@ var frame = () => {
   renderQueue.addStageable(cube);
 
   renderQueue.addStageable(DrawableVector.asNormal(q));
+  for (let p of cube.polys)
+    renderQueue.addStageable(DrawableVector.asNormal(p));
 
   // Renders all objects in a certain order
   renderQueue.stage();
@@ -152,4 +154,5 @@ var frame = () => {
   //console.log(q.points[0].position.z);
   q.rotation.rotate(Axis.X, Angle.fromDegrees(10));
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
+  cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 };

@@ -172,6 +172,39 @@ class Rotation {
     }
   }
 
+  _rotateAboutCenter(axis: Axis, angle: Angle) {
+    if (axis == Axis.X) this.xRotation.add(angle);
+    if (axis == Axis.Y) this.yRotation.add(angle);
+    if (axis == Axis.Z) this.zRotation.add(angle);
+    for (let t of this.targets) t.rotate(axis, angle, this.position);
+  }
+
+  _setTranslationAboutPivot(axis: Axis, angle: Angle, pivot: Position) {
+    let radius = this.position.getDistance2D(axis, pivot);
+    let cos = Math.cos(angle.radians);
+    let sin = Math.sin(angle.radians);
+    if (axis == Axis.X) {
+      this.position.translate(0, pivot.y + radius*cos, pivot.z + radius*sin);
+    } else if (axis == Axis.Y) {
+      this.position.translate(pivot.x + radius*cos, 0, pivot.z + radius*sin);
+    } else if (axis == Axis.Z) {
+      this.position.translate(pivot.x + radius*cos, pivot.y + radius*sin, 0);
+    }
+  }
+
+  setRotationFinal(axis: Axis, angle: Angle, pivot: Position = this.position) {
+    this._rotateAboutCenter(axis, angle);
+    if (!this.isLocalRotation(pivot)) this._setTranslationAboutPivot(axis, angle, pivot);
+  }
+
+
+
+
+
+
+
+
+
   // Comparative local rotation
   _localRotate(axis: Axis, angle: Angle) {
     if (axis == Axis.X) this.xRotation.add(angle);

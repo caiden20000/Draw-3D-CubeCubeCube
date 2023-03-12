@@ -166,9 +166,9 @@ class Rotation {
       if (axis == Axis.Z) return this.zRotation;
     } else {
       let diff = this.position.getDifference(pivot);
-      if (axis == Axis.X) return new Angle(Math.atan2(diff.y, diff.z));
-      if (axis == Axis.Y) return new Angle(Math.atan2(diff.x, diff.z));
-      if (axis == Axis.Z) return new Angle(Math.atan2(diff.x, diff.y));
+      if (axis == Axis.X) return new Angle(Math.atan2(diff.z, diff.y));
+      if (axis == Axis.Y) return new Angle(Math.atan2(diff.z, diff.x));
+      if (axis == Axis.Z) return new Angle(Math.atan2(diff.y, diff.x));
     }
   }
 
@@ -201,8 +201,10 @@ class Rotation {
         this.position.x = pivot.x + radius * Math.cos(angle.radians);
         this.position.z = pivot.z + radius * Math.sin(angle.radians);
       } else if (axis == Axis.Z) {
+        console.log(this.position.x + " : " + this.position.y);
         this.position.x = pivot.x + radius * Math.cos(angle.radians);
         this.position.y = pivot.y + radius * Math.sin(angle.radians);
+        console.log(this.position.x + " : " + this.position.y);
       }
     }
     return this;
@@ -210,6 +212,7 @@ class Rotation {
 
   rotate(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
     let currentAngle = this.getRotation(axis, pivot);
+    console.log(currentAngle.degrees);
     this.setRotation(axis, currentAngle.add(angle), pivot);
     return this;
   }

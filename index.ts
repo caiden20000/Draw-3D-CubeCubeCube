@@ -148,5 +148,5 @@ var frame = () => {
 
   // Code that will modify the positon, rotation, scale, etc of objects:
   //q.position.translate(10, 10, 0);
-  q.rotation._localRotate(Axis.Y, Angle.fromDegrees(10));
+  q.rotation.rotate(Axis.Z, Angle.fromDegrees(5));
 };

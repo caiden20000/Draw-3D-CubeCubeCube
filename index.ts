@@ -88,7 +88,7 @@ let q = new Square(75, 75, 300, 100);
 // cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 1; // todo changie after fixie
+var fps = 15; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -100,13 +100,14 @@ document.getElementsByTagName('html')[0].onkeyup = (e) => {
 var walkSpeed = 10;
 var turnSpeed = 5;
 
+var interval;
 var stepThrough = true;
 if (stepThrough) {
   document.onkeydown = (e: KeyboardEvent) => {
     if (e.key == ' ') frame();
   };
 } else {
-  var interval = setInterval(frame, 1000 / fps);
+  interval = setInterval(() => frame(), 1000 / fps);
 }
 
 var frame = () => {
@@ -126,6 +127,7 @@ var frame = () => {
   //cube.drawNormals(renderQueue);
 
   // Renders all objects in a certain order
+  renderQueue.stage();
 
   if (pressBuffer['q'])
     renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(turnSpeed));
@@ -142,10 +144,9 @@ var frame = () => {
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
   // q.drawNormal(renderQueue);
-  renderQueue.stage();
   renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  q.position.translate(10, 10, 0);
-  //q.rotation.rotate(Axis.Z, Angle.fromDegrees(1), q.position);
+  //q.position.translate(10, 10, 0);
+  q.rotation._localRotate(Axis.Y, Angle.fromDegrees(10));
 };

@@ -16,7 +16,6 @@ class Poly {
     this.position.targets.push(
       ...Position.getPositionArrayFromPoints(this.points)
     );
-    console.log(this.position.targets);
     this.rotation = new Rotation(this.position);
     this.rotation.targets.push(
       ...Rotation.getRotationArrayFromPoints(this.points)
@@ -36,8 +35,6 @@ class Poly {
   }
 
   draw(camera: Camera) {
-    console.log(this.position.targets);
-    console.log(this.points[0].position);
     let projectedPositions: Position[] = [];
     let ctx = camera.canvas.ctx;
     for (let p of this.points)

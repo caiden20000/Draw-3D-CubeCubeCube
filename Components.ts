@@ -190,11 +190,7 @@ class Rotation {
   }
 
   // Rotation about a pivot
-  setRotation(
-    axis: Axis,
-    angle: Angle,
-    pivot: Position = this.position
-  ): Rotation {
+  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
     this._setLocalRotation(axis, angle);
     if (!this.isLocalRotation(pivot)) {
       let radius = this.position.getDistance2D(axis, pivot);

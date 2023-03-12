@@ -88,7 +88,7 @@ let q = new Square(75, 75, 300, 100);
 // cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 15; // todo changie after fixie
+var fps = 30; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -109,7 +109,7 @@ if (stepThrough) {
 } else {
   interval = setInterval(() => frame(), 1000 / fps);
 }
-
+let step = 0;
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
@@ -141,6 +141,7 @@ var frame = () => {
     renderQueue.translateCamera(new Vector(0, 0, -walkSpeed));
   if (pressBuffer['w'])
     renderQueue.translateCamera(new Vector(0, 0, walkSpeed));
+  if (pressBuffer['p']) clearInterval(interval);
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
   // q.drawNormal(renderQueue);
@@ -148,5 +149,6 @@ var frame = () => {
 
   // Code that will modify the positon, rotation, scale, etc of objects:
   //q.position.translate(10, 10, 0);
-  q.rotation.rotate(Axis.Z, Angle.fromDegrees(5));
+  console.log(q.points[0].position.z);
+  q.rotation.rotate(Axis.X, Angle.fromDegrees(10));
 };

@@ -184,71 +184,84 @@ class Rotation {
     let cos = Math.cos(angle.radians);
     let sin = Math.sin(angle.radians);
     if (axis == Axis.X) {
-      this.position.translate(0, pivot.y + radius*cos, pivot.z + radius*sin);
+      this.position.set(
+        this.position.x,
+        pivot.y + radius * cos,
+        pivot.z + radius * sin
+      );
     } else if (axis == Axis.Y) {
-      this.position.translate(pivot.x + radius*cos, 0, pivot.z + radius*sin);
+      this.position.set(
+        pivot.x + radius * cos,
+        this.position.y,
+        pivot.z + radius * sin
+      );
     } else if (axis == Axis.Z) {
-      this.position.translate(pivot.x + radius*cos, pivot.y + radius*sin, 0);
+      this.position.set(
+        pivot.x + radius * cos,
+        pivot.y + radius * sin,
+        this.position.z
+      );
     }
   }
 
-  setRotationFinal(axis: Axis, angle: Angle, pivot: Position = this.position) {
-    this._rotateAboutCenter(axis, angle);
-    if (!this.isLocalRotation(pivot)) this._setTranslationAboutPivot(axis, angle, pivot);
-  }
-
-
-
-
-
-
-
-
-
-  // Comparative local rotation
-  _localRotate(axis: Axis, angle: Angle) {
-    if (axis == Axis.X) this.xRotation.add(angle);
-    if (axis == Axis.Y) this.yRotation.add(angle);
-    if (axis == Axis.Z) this.zRotation.add(angle);
-    for (let r of this.targets) r.rotate(axis, angle, this.position);
-  }
-
-  // Absolute local rotation
-  _setLocalRotation(axis: Axis, angle: Angle) {
-    let diffAngle: Angle;
-    if (axis == Axis.X) diffAngle = angle.difference(this.xRotation);
-    if (axis == Axis.Y) diffAngle = angle.difference(this.yRotation);
-    if (axis == Axis.Z) diffAngle = angle.difference(this.zRotation);
-    this._localRotate(axis, diffAngle);
-  }
-
-  // Rotation about a pivot
-  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
-    this._setLocalRotation(axis, angle);
-    if (!this.isLocalRotation(pivot)) {
-      let radius = this.position.getDistance2D(axis, pivot);
-      if (axis == Axis.X) {
-        this.position.y = pivot.y + radius * Math.cos(angle.radians);
-        this.position.z = pivot.z + radius * Math.sin(angle.radians);
-      } else if (axis == Axis.Y) {
-        this.position.x = pivot.x + radius * Math.cos(angle.radians);
-        this.position.z = pivot.z + radius * Math.sin(angle.radians);
-      } else if (axis == Axis.Z) {
-        console.log(this.position.x + " : " + this.position.y);
-        this.position.x = pivot.x + radius * Math.cos(angle.radians);
-        this.position.y = pivot.y + radius * Math.sin(angle.radians);
-        console.log(this.position.x + " : " + this.position.y);
-      }
-    }
-    return this;
-  }
-
-  rotate(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+  setRotation(axis: Axis, angle: Angle, pivot: Position = this.position) {
     let currentAngle = this.getRotation(axis, pivot);
-    console.log(currentAngle.degrees);
-    this.setRotation(axis, currentAngle.add(angle), pivot);
-    return this;
+    this._rotateAboutCenter(axis, angle.difference(currentAngle));
+    if (!this.isLocalRotation(pivot))
+      this._setTranslationAboutPivot(axis, angle, pivot);
   }
+
+  rotate(axis: Axis, angle: Angle, pivot: Position = this.position) {
+    let currentAngle = this.getRotation(axis, pivot);
+    this._rotateAboutCenter(axis, angle);
+    if (!this.isLocalRotation(pivot))
+      this._setTranslationAboutPivot(axis, currentAngle.add(angle), pivot);
+  }
+
+  // // Comparative local rotation
+  // _localRotate(axis: Axis, angle: Angle) {
+  //   if (axis == Axis.X) this.xRotation.add(angle);
+  //   if (axis == Axis.Y) this.yRotation.add(angle);
+  //   if (axis == Axis.Z) this.zRotation.add(angle);
+  //   for (let r of this.targets) r.rotate(axis, angle, this.position);
+  // }
+
+  // // Absolute local rotation
+  // _setLocalRotation(axis: Axis, angle: Angle) {
+  //   let diffAngle: Angle;
+  //   if (axis == Axis.X) diffAngle = angle.difference(this.xRotation);
+  //   if (axis == Axis.Y) diffAngle = angle.difference(this.yRotation);
+  //   if (axis == Axis.Z) diffAngle = angle.difference(this.zRotation);
+  //   this._localRotate(axis, diffAngle);
+  // }
+
+  // // Rotation about a pivot
+  // setRotation(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+  //   this._setLocalRotation(axis, angle);
+  //   if (!this.isLocalRotation(pivot)) {
+  //     let radius = this.position.getDistance2D(axis, pivot);
+  //     if (axis == Axis.X) {
+  //       this.position.y = pivot.y + radius * Math.cos(angle.radians);
+  //       this.position.z = pivot.z + radius * Math.sin(angle.radians);
+  //     } else if (axis == Axis.Y) {
+  //       this.position.x = pivot.x + radius * Math.cos(angle.radians);
+  //       this.position.z = pivot.z + radius * Math.sin(angle.radians);
+  //     } else if (axis == Axis.Z) {
+  //       console.log(this.position.x + " : " + this.position.y);
+  //       this.position.x = pivot.x + radius * Math.cos(angle.radians);
+  //       this.position.y = pivot.y + radius * Math.sin(angle.radians);
+  //       console.log(this.position.x + " : " + this.position.y);
+  //     }
+  //   }
+  //   return this;
+  // }
+
+  // rotate(axis: Axis, angle: Angle, pivot: Position = this.position): Rotation {
+  //   let currentAngle = this.getRotation(axis, pivot);
+  //   console.log(currentAngle.degrees);
+  //   this.setRotation(axis, currentAngle.add(angle), pivot);
+  //   return this;
+  // }
 }
 
 /**

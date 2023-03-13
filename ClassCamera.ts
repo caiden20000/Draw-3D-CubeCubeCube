@@ -8,7 +8,7 @@ export { Camera };
 
 class Camera {
   public position: Position;
-  public Rotation: Rotation;
+  public rotation: Rotation;
   public frustum: Frustum;
   constructor(
     public canvas: Canvas,
@@ -23,7 +23,7 @@ class Camera {
     );
 
     this.position = new Position(0, 0, 0);
-    this.Rotation = new Rotation(this.position);
+    this.rotation = new Rotation(this.position);
 
     // Set origin in center
     this.canvas.ctx.translate(this.frustum.xDom, this.frustum.yDom);
@@ -33,8 +33,8 @@ class Camera {
 
   toCameraSpace(pos: Position): Position {
     // TODO
-    
-    return pos.clone().translate(400, 400, 0);
+    let clone = pos.clone();
+    return clone.translate(-this.position.x, this.position.y, -this.position.z);
   }
 
   fromCameraSpaceToScreenSpace(pos: Position): Position {

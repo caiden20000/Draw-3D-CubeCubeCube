@@ -18,9 +18,18 @@ class Position {
     public targets: Position[] = []
   ) {}
 
-  // Clone shares targets.
+  // Clone has no targets.
   clone(): Position {
-    return new Position(this.x, this.y, this.z, this.targets);
+    return new Position(this.x, this.y, this.z);
+  }
+
+  // Clones targets
+  // Potential infinite loop if, for some godforsaken reason,
+  // you have a cyclic target.
+  deepClone(): Position {
+    let deepTargets: Position[] = [];
+    for (let t of this.targets) deepTargets.push(t.deepClone());
+    return new Position(this.x, this.y, this.z, deepTargets);
   }
 
   static getPositionArrayFromPoints(points: Point[]): Position[] {

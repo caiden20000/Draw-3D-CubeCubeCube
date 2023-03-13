@@ -28,17 +28,17 @@ class RenderQueue {
     this.renderQueue = [];
   }
 
-  // Call this after everything is staged
-  rotateCamera(axis: Axis, angle: Angle) {
-    angle.invert();
-    for (let p of this.renderQueue)
-      p.rotation.rotate(axis, angle, Position.ORIGIN);
-  }
+  // // Call this after everything is staged
+  // rotateCamera(axis: Axis, angle: Angle) {
+  //   angle.invert();
+  //   for (let p of this.renderQueue)
+  //     p.rotation.rotate(axis, angle, Position.ORIGIN);
+  // }
 
-  translateCamera(vec: Vector) {
-    vec.invert();
-    for (let p of this.renderQueue) p.position.translateByVector(vec);
-  }
+  // translateCamera(vec: Vector) {
+  //   vec.invert();
+  //   for (let p of this.renderQueue) p.position.translateByVector(vec);
+  // }
 
   addStageable(r: Stageable) {
     this.stagingQueue.push(r);
@@ -49,7 +49,7 @@ class RenderQueue {
     this.renderQueue.sort((a, b) => b.position.z - a.position.z);
   }
 
-  // Currently the best
+  // Second best
   // has issues though (?)
   // :-(
   sortQueueByDistanceToOrigin() {
@@ -60,9 +60,10 @@ class RenderQueue {
     );
   }
 
+  // Current best
+  // Has issues, possibly related to distance to origin != distance to screen
   sortQueueByDistanceToCamera(camera: Camera) {
     this.renderQueue.sort((a, b) => {
-      return camera.toCameraSpace(a.position).x;
       let aCam = camera.toCameraSpace(a.position);
       let bCam = camera.toCameraSpace(b.position);
       return (
@@ -84,11 +85,7 @@ class RenderQueue {
   // Draws all Drawable in renderQueue in order
   // Clears the renderQueue, add things every frame!
   render(camera: Camera) {
-    //this.sortQueueByDistanceToOrigin();
     this.sortQueueByDistanceToCamera(camera);
-    // for (let i=0; i<this.renderQueue.length; i++) {
-    //   this.renderQueue[i].draw(camera);
-    // }
     for (let r of this.renderQueue) r.draw(camera);
     this.clearRenderQueue();
   }

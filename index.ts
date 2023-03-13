@@ -53,9 +53,9 @@ let splashText: string[] = [
   'INTENTIONALLY LEFT BLANK',
   '!! SPIN FASTER !!',
   'Direct Access!',
-  'it\'s_a_snake!',
-  'it\'sACamel!',
-  'Runs quiet!'
+  "it's_a_snake!",
+  "it'sACamel!",
+  'Runs quiet!',
 ];
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 
@@ -110,7 +110,7 @@ if (stepThrough) {
   interval = setInterval(() => frame(), 1000 / fps);
 }
 let step = 0;
-let cubeV = {x: 10, y: 9, z: 8};
+let cubeV = { x: 10, y: 9, z: 8 };
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
@@ -133,17 +133,13 @@ var frame = () => {
   renderQueue.stage();
 
   if (pressBuffer['q'])
-    renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(turnSpeed));
+    camera.rotation.rotate(Axis.Y, Angle.fromDegrees(turnSpeed));
   if (pressBuffer['e'])
-    renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(-turnSpeed));
-  if (pressBuffer['d'])
-    renderQueue.translateCamera(new Vector(walkSpeed, 0, 0));
-  if (pressBuffer['a'])
-    renderQueue.translateCamera(new Vector(-walkSpeed, 0, 0));
-  if (pressBuffer['s'])
-    renderQueue.translateCamera(new Vector(0, 0, -walkSpeed));
-  if (pressBuffer['w'])
-    renderQueue.translateCamera(new Vector(0, 0, walkSpeed));
+    camera.rotation.rotate(Axis.Y, Angle.fromDegrees(-turnSpeed));
+  if (pressBuffer['d']) camera.position.translate(walkSpeed, 0, 0);
+  if (pressBuffer['a']) camera.position.translate(-walkSpeed, 0, 0);
+  if (pressBuffer['s']) camera.position.translate(0, 0, -walkSpeed);
+  if (pressBuffer['w']) camera.position.translate(0, 0, walkSpeed);
   if (pressBuffer['p']) clearInterval(interval);
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs

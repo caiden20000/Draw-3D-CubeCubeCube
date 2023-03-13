@@ -18,6 +18,11 @@ class Position {
     public targets: Position[] = []
   ) {}
 
+  // Clone shares targets.
+  clone(): Position {
+    return new Position(this.x, this.y, this.z, this.targets);
+  }
+
   static getPositionArrayFromPoints(points: Point[]): Position[] {
     let result: Position[] = [];
     for (let p of points) result.push(p.position);

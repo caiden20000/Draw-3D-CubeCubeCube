@@ -33,7 +33,8 @@ class Camera {
 
   toCameraSpace(pos: Position): Position {
     // TODO
-    return pos;
+    
+    return pos.clone().translate(400, 400, 0);
   }
 
   fromCameraSpaceToScreenSpace(pos: Position): Position {

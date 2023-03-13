@@ -50,13 +50,25 @@ class RenderQueue {
   }
 
   // Currently the best
+  // has issues though (?)
+  // :-(
   sortQueueByDistanceToOrigin() {
-
     this.renderQueue.sort(
       (a, b) =>
         b.position.getDistance(Position.ORIGIN) -
         a.position.getDistance(Position.ORIGIN)
     );
+  }
+
+  sortQueueByDistanceToCamera(camera: Camera) {
+    this.renderQueue.sort((a, b) => {
+      return camera.toCameraSpace(a.position).x;
+      let aCam = camera.toCameraSpace(a.position);
+      let bCam = camera.toCameraSpace(b.position);
+      return (
+        bCam.getDistance(camera.position) - aCam.getDistance(camera.position)
+      );
+    });
   }
 
   clearRenderQueue() {
@@ -72,7 +84,8 @@ class RenderQueue {
   // Draws all Drawable in renderQueue in order
   // Clears the renderQueue, add things every frame!
   render(camera: Camera) {
-    this.sortQueueByDistanceToOrigin();
+    //this.sortQueueByDistanceToOrigin();
+    this.sortQueueByDistanceToCamera(camera);
     // for (let i=0; i<this.renderQueue.length; i++) {
     //   this.renderQueue[i].draw(camera);
     // }

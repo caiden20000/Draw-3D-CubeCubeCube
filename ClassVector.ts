@@ -1,13 +1,14 @@
 import { Point } from './ClassPoint';
 import { Angle } from './ClassAngle';
-import { PositionalObject } from './ClassPositionalObject';
 import { Position } from './Components';
 
 export { Vector };
 
-class Vector extends PositionalObject {
-  constructor(x: number, y: number, z: number) {
-    super(x, y, z);
+class Vector {
+  constructor(public x: number, public y: number, public z: number) {}
+
+  toPosition() {
+    return new Position(this.x, this.y, this.z);
   }
 
   // Returns independent copy of vector.

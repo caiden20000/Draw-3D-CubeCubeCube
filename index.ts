@@ -4,9 +4,6 @@ import './style.css';
 // // // // // Imports // // // // //
 // import {  } from "./Class";
 import { r, r_li, clamp } from './CommonTypes';
-import { Quad } from './ClassQuad';
-import { Point } from './ClassPoint';
-import { Shape } from './ClassShape';
 import { Angle } from './ClassAngle';
 import { Canvas } from './ClassCanvas';
 import { Color } from './ClassColor';
@@ -15,8 +12,6 @@ import { Vector } from './ClassVector';
 import { Axis } from './EnumAxis';
 import { Square } from './ClassSquare';
 import { Cube } from './ClassCube';
-import { Frustum } from './ClassFrustum';
-import { Renderable } from './ClassRenderable';
 import { Camera } from './ClassCamera';
 import { DrawableVector } from './ClassDrawableVector';
 import { Position } from './Components';
@@ -157,3 +152,18 @@ var frame = () => {
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 };
+
+/*
+Current model:
+"Stageable" objects have the method stage(Renderable[]).
+You add stageable objects to the rendering queue via renderQueue.addStageable().
+When renderingQueue.stage() is called, it calls stage(renderQueue[]) on every stageable.
+Each stageable object will then add Renderable object/s to the array passed in.
+For example, Polys stage themselves.
+             Shapes stage every poly they contain.
+             DrawableVectors stage themselves and their DrawablePoint tip.
+Renderable objects contain a Position, Rotation, and draw(Camera).
+When renderQueue.render(Camera) is called, it calls draw(Camera) on every renderable
+(in order of descending distance from camera center)
+
+*/

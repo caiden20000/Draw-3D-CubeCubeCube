@@ -2,45 +2,22 @@ import { Angle } from './ClassAngle';
 import { Point } from './ClassPoint';
 import { Quad } from './ClassQuad';
 import { Shape } from './ClassShape';
+import { Position } from './Components';
 
 export { Cube };
 
 class Cube extends Shape {
-  constructor(public center: Point, public size: number) {
-    super(center.x, center.y, center.z);
+  constructor(x: number, y: number, z: number, public size: number) {
+    super(0, 0, 0);
     this.init();
+    this.position.translate(x, y, z);
   }
 
   init() {
-    this.quads = [];
+    this.polys = [];
     let hs = this.size / 2;
-    /* 
-    // xyz, p = positive, n = negative
-    let ppp = new Point(hs, hs, hs);
-    let ppn = new Point(hs, hs, -hs);
-    let pnp = new Point(hs, -hs, hs);
-    let pnn = new Point(hs, -hs, -hs);
-    let npp = new Point(-hs, hs, hs);
-    let npn = new Point(-hs, hs, -hs);
-    let nnp = new Point(-hs, -hs, hs);
-    let nnn = new Point(-hs, -hs, -hs);
     // Front
-    this.addQuad(new Quad(ppn, npn, nnn, pnn));
-    // Back
-    this.addQuad(new Quad(ppp, pnp, nnp, npp));
-    // Left
-    this.addQuad(new Quad(npn, npp, nnp, nnn));
-    // Right
-    this.addQuad(new Quad(ppn, pnn, pnp, ppp));
-    // Top
-    this.addQuad(new Quad(ppp, npp, npn, ppn));
-    // Bottom
-    this.addQuad(new Quad(pnp, pnn, nnn, nnp));
-    */
-    // Old, easy system caused quads to share point references, which messed up certain translations,
-    // eg, made it rotate ~3x faster because every point was rotated 3 times.
-    // Front
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(hs, hs, -hs),
         new Point(-hs, hs, -hs),
@@ -49,7 +26,7 @@ class Cube extends Shape {
       )
     );
     // Back
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(hs, hs, hs),
         new Point(hs, -hs, hs),
@@ -58,7 +35,7 @@ class Cube extends Shape {
       )
     );
     // Left
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(-hs, hs, -hs),
         new Point(-hs, hs, hs),
@@ -67,7 +44,7 @@ class Cube extends Shape {
       )
     );
     // Right
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(hs, hs, -hs),
         new Point(hs, -hs, -hs),
@@ -76,7 +53,7 @@ class Cube extends Shape {
       )
     );
     // Top
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(hs, hs, hs),
         new Point(-hs, hs, hs),
@@ -85,7 +62,7 @@ class Cube extends Shape {
       )
     );
     // Bottom
-    this.addQuad(
+    this.addPoly(
       new Quad(
         new Point(hs, -hs, hs),
         new Point(hs, -hs, -hs),
@@ -93,7 +70,5 @@ class Cube extends Shape {
         new Point(-hs, -hs, hs)
       )
     );
-
-    this.translate(this.center.toVector());
   }
 }

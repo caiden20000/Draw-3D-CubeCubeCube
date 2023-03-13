@@ -75,14 +75,34 @@ class Color {
     return newColor;
   }
 
-  static RED = () => new Color(255, 0, 0);
-  static YELLOW = () => new Color(255, 255, 0);
-  static GREEN = () => new Color(0, 255, 0);
-  static CYAN = () => new Color(0, 255, 255);
-  static BLUE = () => new Color(0, 0, 255);
-  static PURPLE = () => new Color(255, 0, 255);
-  static WHITE = () => new Color(255, 255, 255);
-  static BLACK = () => new Color(0, 0, 0);
-  static GREY = () => new Color(127, 127, 127);
-  static TRANSPARENT = () => new Color(0, 0, 0, 0);
+  public static get RED() {
+    return new Color(255, 0, 0);
+  }
+  public static get YELLOW() {
+    return new Color(255, 255, 0);
+  }
+  public static get GREEN() {
+    return new Color(0, 255, 0);
+  }
+  public static get CYAN() {
+    return new Color(0, 255, 255);
+  }
+  public static get BLUE() {
+    return new Color(0, 0, 255);
+  }
+  public static get PURPLE() {
+    return new Color(255, 0, 255);
+  }
+  public static get WHITE() {
+    return new Color(255, 255, 255);
+  }
+  public static get BLACK() {
+    return new Color(0, 0, 0);
+  }
+  public static get GREY() {
+    return new Color(127, 127, 127);
+  }
+  public static get TRANSPARENT() {
+    return new Color(0, 0, 0, 0);
+  }
 }

@@ -4,9 +4,6 @@ import './style.css';
 // // // // // Imports // // // // //
 // import {  } from "./Class";
 import { r, r_li, clamp } from './CommonTypes';
-import { Quad } from './ClassQuad';
-import { Point } from './ClassPoint';
-import { Shape } from './ClassShape';
 import { Angle } from './ClassAngle';
 import { Canvas } from './ClassCanvas';
 import { Color } from './ClassColor';
@@ -15,8 +12,9 @@ import { Vector } from './ClassVector';
 import { Axis } from './EnumAxis';
 import { Square } from './ClassSquare';
 import { Cube } from './ClassCube';
-import { Frustum } from './ClassFrustum';
-import { Renderable } from './ClassRenderable';
+import { Camera } from './ClassCamera';
+import { DrawableVector } from './ClassDrawableVector';
+import { Position } from './Components';
 
 // Write TypeScript code!
 const appDiv: HTMLElement = document.getElementById('app');
@@ -29,39 +27,33 @@ appDiv.innerHTML = `<h1>Typescript template</h1>`;
 // // // // // Splash Text // // // // //
 
 let splashText: string[] = [
-  'Makes the cookies!',
-  'TYPE FASTER',
-  'Do it, let CUBE comsume you',
-  'fill it with words',
-  'release date: never',
-  'if you stop now, you may never come back',
-  'I need serious help. With coding.',
+  'Makes cookies!',
+  '!! TYPE FASTER !!',
+  'Let CUBE comsume you',
+  'Fill it with words!',
+  'Release date: never!',
+  'if you stop now, you might never come back!',
   'Minceraft!',
-  'is a brank, pro',
-  'stinky fingers',
-  "This isn't that.",
-  'inaproprit comnent',
+  'Stinky fingers!',
   'Weak bones',
   'Kneads the dough!',
-  'NEEDS THE DOUGH',
+  'NEEDS THE DOUGH!',
   'MONTE!!',
-  'coding challenge: dont',
+  "Coding challenge: Don't!",
   'no u',
   'umadbro?',
-  'rails: off',
-  'jimmies: rustled',
-  'can be easily spooked',
-  'boo',
+  'Rails: off',
+  'Jimmies: rustled',
+  'Warning: can be easily spooked',
+  'BOO!',
   '☺♥☻',
   'ᕕ( ՞ ᗜ ՞ )ᕗ',
   'ᕕ(⌐■_■)ᕗ ♪♬',
   '(-_-｡)',
   'INTENTIONALLY LEFT BLANK',
-  'LGBTQIA++ is not a coding language',
-  'SPIN FASTER',
-  'Direct Access',
+  '!! SPIN FASTER !!',
+  'Direct Access!',
 ];
-
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 
 // // // // // Canvas // // // // //
@@ -82,17 +74,18 @@ const ctx = canvasElement.getContext('2d');
 // like, uh, a dice
 
 // Test driving code //
-let canvas = new Canvas(canvasElement, Angle.fromDegrees(45));
+let canvas = new Canvas(canvasElement);
 canvas.setBackgroundColor(new Color(0, 0, 0));
+let camera = new Camera(canvas, Angle.fromDegrees(45));
 
-let q = new Square(new Point(75, 75, 300), 100);
+let q = new Square(75, 75, 300, 100);
 
-// let cube = new Cube(new Point(-100, -150, 300), 100);
-// cube.setColor(Color.BLUE());
-// cube.updateColor();
+let cube = new Cube(-100, -150, 300, 100);
+cube.style.setColor(Color.BLUE);
+cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 30;
+var fps = 30; // todo changie after fixie
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -104,23 +97,36 @@ document.getElementsByTagName('html')[0].onkeyup = (e) => {
 var walkSpeed = 10;
 var turnSpeed = 5;
 
-setInterval(() => {
+var interval;
+var stepThrough = false;
+if (stepThrough) {
+  document.onkeydown = (e: KeyboardEvent) => {
+    if (e.key == ' ') frame();
+  };
+} else {
+  interval = setInterval(() => frame(), 1000 / fps);
+}
+let step = 0;
+var frame = () => {
   // Reset canvas for new frame
-  canvas.clear();
+  camera.canvas.clear();
 
   // run key functions
 
   // Draw quad
-  q.setColor(Color.RED().lightParallel(Vector.PositiveY, q.getNormal(), 1));
-  renderQueue.addRenderable(q);
+  q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
+  renderQueue.addStageable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
-  // cube.lightNormal(new Vector(1, 2, -2), 0.9);
-  // renderQueue.addShape(cube);
+  cube.lightNormal(new Vector(1, 2, -2), 0.9);
+  renderQueue.addStageable(cube);
 
-  //cube.drawNormals(renderQueue);
+  renderQueue.addStageable(DrawableVector.asNormal(q));
+  for (let p of cube.polys)
+    renderQueue.addStageable(DrawableVector.asNormal(p));
 
   // Renders all objects in a certain order
+  renderQueue.stage();
 
   if (pressBuffer['q'])
     renderQueue.rotateCamera(Axis.Y, Angle.fromDegrees(turnSpeed));
@@ -134,75 +140,37 @@ setInterval(() => {
     renderQueue.translateCamera(new Vector(0, 0, -walkSpeed));
   if (pressBuffer['w'])
     renderQueue.translateCamera(new Vector(0, 0, walkSpeed));
+  if (pressBuffer['p']) clearInterval(interval);
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
-  q.drawNormal(renderQueue);
-  renderQueue.render(canvas);
+  // q.drawNormal(renderQueue);
+  renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  // cube.rotate(cube.center, Axis.Y, Angle.fromDegrees(5));
+  //console.log(q.points[0].position.z);
+  q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
+  cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
+  cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
+};
 
-  q.rotate(q.getCenter(), Axis.X, Angle.fromDegrees(1));
-  //q.rotate(new Point(75, 35, 200), Axis.X, Angle.fromDegrees(2));
-  //q.rotate(new Point(100, 100, 150), Axis.Z, Angle.fromDegrees(5));
-}, 1000 / fps);
+/*
+Current model:
+"Stageable" objects have the method stage(Renderable[]).
+You add stageable objects to the rendering queue via renderQueue.addStageable().
+When renderingQueue.stage() is called, it calls stage(renderQueue[]) on every stageable.
+Each stageable object will then add Renderable object/s to the array passed in.
+For example, Polys stage themselves.
+             Shapes stage every poly they contain.
+             DrawableVectors stage themselves and their DrawablePoint tip.
+Renderable objects contain a Position, Rotation, and draw(Camera).
+When renderQueue.render(Camera) is called, it calls draw(Camera) on every renderable
+(in order of descending distance from camera center)
+*/
 
-// TODO: method to get rotation of a quad or shapee
-
-// TODO: There needs to be a structure where all instantiated objects are added to a superArray,
-//       and this can be used for "camera movement" as well as rendering.
-
-// TODO: Uh oh, quaternions.
-//       Basically, if we rotate everything in the scene to rotate the camera, then we have to have quaternion based rotation
-
-// TODO: Coordinate pipeline
-// Right now we have world space -> screen space
-// Rotating all of the objects instead of rotating the camera is
-// NOT sustainable, as something rotating on an axis will rotate on
-// the new axis after rotation.
-// SO we want a coordinate pipeline that goes
-// WorldSpace -> CameraSpace -> ScreenSpace
-// ie, all points in space are already stored in WorldSpace
-// but now we add a CameraSpace layer where things are
-// rotated and translated with respect to the camera.
-// Maybe a new type of object can be used, called
-// CameraSpaceObject
-// that can encapsulate a Renderable
-// and has the methods to calculate and store camera space.
-
-// TODO new paradigm:
-//      any method that modifies the object must return the object
-//      for chaining purposes.
-//      ie so we can do "return angle.rotate(x);"
-//      instead of "angle.rotate(x); return angle;"
-//    Right now its a mess, half of the methods do and half don't.
-
-// TODO new paradigm:
-//      NO get/set getters and setters.
-//      only explicit method getSomething() and setSomething().
-
-// TODO: replace Positional interface with this
-
-// Renderable encapsulator
-// keeps a reference to a Renderable object to
-// calculate and store the camera space position.
-// The storage is important for optimization.
-// class CameraSpaceRenderable {
-//   constructor(public object: Renderable, public camera: Camera) {}
-// }
-
-// class ScreenSpaceRenderable {
-//   public frustum: Frustum;
-//   constructor(public object: CameraSpaceRenderable, public canvas: Canvas) {
-//     this.frustum = object.camera.frustum;
-//   }
-// }
-
-/**
- * The structure of the rendering pipeline:
- * Points have x, y, z
- * Everything renderable has points
- * Points get converted into camera space via Camera
- * Points get converted from camera space to Screen space via Screen
- * points get drawn on screen
- */
+/*
+TODO:
+Fix/remove remnants of old PositionalObject and Renderable system
+Add camera dependent position conversion API
+Implement it
+Implement size component for Poly, Shape (base on ratio of distance to points)
+*/

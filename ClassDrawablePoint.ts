@@ -1,22 +1,13 @@
 import { Canvas } from './ClassCanvas';
+import { Color } from './ClassColor';
 import { Point } from './ClassPoint';
-import { Renderable } from './ClassRenderable';
+import { Square } from './ClassSquare';
 
 export { DrawablePoint };
 
-class DrawablePoint extends Renderable {
+class DrawablePoint extends Square {
   constructor(public point: Point, public size: number = 6) {
-    super(point.x, point.y, point.z);
-  }
-
-  draw(canvas: Canvas) {
-    let proj = canvas.screen.projectPoint(this.point);
-    this.applyColor(canvas);
-    canvas.ctx.fillRect(
-      proj.x - this.size / 2,
-      proj.y - this.size / 2,
-      this.size,
-      this.size
-    );
+    super(point.position.x, point.position.y, point.position.z, size);
+    this.style.setColor(Color.PURPLE);
   }
 }

@@ -1,13 +1,17 @@
-import { Canvas } from './ClassCanvas';
+import { Color } from './ClassColor';
+import { DrawablePoint } from './ClassDrawablePoint';
 import { Point } from './ClassPoint';
 import { Poly } from './ClassPoly';
+import { Renderable } from './ClassRenderQueue';
 import { Vector } from './ClassVector';
 
 export { DrawableVector };
 
 class DrawableVector extends Poly {
+  public tipVisible: boolean = true;
   constructor(public origin: Point, public tip: Point) {
     super([origin, tip]);
+    this.style.setColor(Color.GREEN);
   }
 
   static fromVector(origin: Point, vector: Vector, length: number = 50) {
@@ -18,18 +22,21 @@ class DrawableVector extends Poly {
     return new DrawableVector(origin, vector.toPoint());
   }
 
-  getVector(): Vector {
-    return Vector.fromPoints(this.origin, this.tip);
+  static asNormal(poly: Poly, length: number = 50) {
+    return DrawableVector.fromVector(poly.position.toPoint(), poly.getNormal());
   }
 
-  draw(canvas: Canvas) {
-    let projectedOrigin = canvas.screen.projectPoint(this.origin);
-    let projectedTip = canvas.screen.projectPoint(this.tip);
-    this.applyColor(canvas);
-    canvas.ctx.beginPath();
-    canvas.ctx.moveTo(projectedOrigin.x, projectedOrigin.y);
-    canvas.ctx.lineTo(projectedTip.x, projectedTip.y);
-    canvas.ctx.closePath();
-    canvas.ctx.stroke();
+  getVector(): Vector {
+    return Vector.fromPositions(this.origin.position, this.tip.position);
+  }
+
+  drawTip(tipVisible: boolean): DrawableVector {
+    this.tipVisible = tipVisible;
+    return this;
+  }
+
+  stage(objects: Renderable[]) {
+    objects.push(this);
+    if (this.tipVisible) objects.push(new DrawablePoint(this.tip));
   }
 }

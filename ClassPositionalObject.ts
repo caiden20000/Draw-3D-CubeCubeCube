@@ -20,8 +20,8 @@ class PositionalObject implements Positional {
 
   //
   _getAxisDiff(pivot: Point, axis: Axis) {
-    let dx = 0,
-      dy = 0;
+    let dx = 0;
+    let dy = 0;
     if (axis == Axis.X) {
       dx = this.y - pivot.y;
       dy = this.z - pivot.z;
@@ -45,7 +45,7 @@ class PositionalObject implements Positional {
     let diff = this._getAxisDiff(pivot, axis);
     let radius = Math.sqrt(diff.dx ** 2 + diff.dy ** 2);
     let newX = pivot.x + radius * Math.cos(angle.radians);
-    let newY = pivot.x + radius * Math.sin(angle.radians);
+    let newY = pivot.y + radius * Math.sin(angle.radians);
     if (axis == Axis.X) {
       this.y = newX;
       this.z = newY;

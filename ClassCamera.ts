@@ -31,16 +31,44 @@ class Camera {
     this.canvas.ctx.scale(1, -1);
   }
 
-  toCameraSpace(point: Point): Point {
+  toCameraSpace(pos: Position): Position {
     // TODO
-    return point;
+    return pos;
   }
 
-  fromCameraSpaceToScreenSpace(point: Point): Point {
-    return point;
+  fromCameraSpaceToScreenSpace(pos: Position): Position {
+    return this.frustum.projectPosition(pos);
   }
 
-  toScreenSpace(point: Point) {
-    return this.fromCameraSpaceToScreenSpace(this.toCameraSpace(point));
+  // When drawing a shape, call toScreenSpace to find true drawing points.
+  // Returns null if not on screen; ie don't draw if return null
+  // Null override for when calling for poly
+  toScreenSpace(pos: Position, nullOverride: boolean = false): Position {
+    if (!this.isVisible(pos) && !nullOverride) return null;
+    return this.fromCameraSpaceToScreenSpace(this.toCameraSpace(pos));
+  }
+
+  // Returns null if not on screen; ie don't draw if return null
+  // Null override for ultimate power :)
+  polyToScreenSpace(
+    posArr: Position[],
+    nullOverride: boolean = false
+  ): Position[] {
+    if (!this.isPolyVisible(posArr) && !nullOverride) return null;
+    let screenPosArr: Position[] = [];
+    for (let p of posArr) screenPosArr.push(this.toScreenSpace(p, true));
+    return screenPosArr;
+  }
+
+  isVisible(pos: Position): boolean {
+    let cameraPos = this.toCameraSpace(pos);
+    return this.frustum.isPositionInFrustum(pos);
+  }
+
+  isPolyVisible(posArr: Position[]): boolean {
+    for (let p of posArr) {
+      if (this.frustum.isPositionInFrustum(this.toCameraSpace(p))) return true;
+    }
+    return false;
   }
 }

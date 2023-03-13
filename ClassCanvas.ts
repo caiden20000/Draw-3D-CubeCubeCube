@@ -44,9 +44,4 @@ class Canvas {
       this.height
     );
   }
-
-  // TODO
-  drawArrowHead(point: Point, vec: Vector, size: number) {
-    this.ctx.beginPath();
-  }
 }

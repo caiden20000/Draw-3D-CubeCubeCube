@@ -35,10 +35,12 @@ class Poly {
   }
 
   draw(camera: Camera) {
-    let projectedPositions: Position[] = [];
+    let projectedPositions = camera.polyToScreenSpace(
+      Position.getPositionArrayFromPoints(this.points)
+    );
+    if (projectedPositions == null) return; // Don't draw if poly is offscreen
+
     let ctx = camera.canvas.ctx;
-    for (let p of this.points)
-      projectedPositions.push(camera.frustum.projectPosition(p.position));
 
     this.style.applyColor(camera.canvas);
     ctx.beginPath();

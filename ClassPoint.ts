@@ -1,4 +1,3 @@
-import { PositionalObject } from './ClassPositionalObject';
 import { Vector } from './ClassVector';
 import { Position, Rotation } from './Components';
 

@@ -118,16 +118,16 @@ var frame = () => {
   // run key functions
 
   // Draw quad
-  q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
-  renderQueue.addStageable(q);
+  // q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
+  // renderQueue.addStageable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
   cube.lightNormal(new Vector(1, 2, -2), 0.9);
   renderQueue.addStageable(cube);
 
-  renderQueue.addStageable(DrawableVector.asNormal(q));
-  for (let p of cube.polys)
-    renderQueue.addStageable(DrawableVector.asNormal(p));
+  // renderQueue.addStageable(DrawableVector.asNormal(q));
+  // for (let p of cube.polys)
+  //   renderQueue.addStageable(DrawableVector.asNormal(p));
 
   // Renders all objects in a certain order
   renderQueue.stage();
@@ -156,13 +156,13 @@ var frame = () => {
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 
-  cube.position.translate(cubeV.x, cubeV.y, cubeV.z);
-  if (cubeV.x > 0 && cube.position.x >= canvasWidth/2) cubeV.x *= -1;
-  if (cubeV.x < 0 && cube.position.x <= -canvasWidth/2) cubeV.x *= -1;
-  if (cubeV.y > 0 && cube.position.y >= canvasHeight/2) cubeV.y *= -1;
-  if (cubeV.y < 0 && cube.position.y <= -canvasHeight/2) cubeV.y *= -1;
-  if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
-  if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
+  // cube.position.translate(cubeV.x, cubeV.y, cubeV.z);
+  // if (cubeV.x > 0 && cube.position.x >= canvasWidth/2) cubeV.x *= -1;
+  // if (cubeV.x < 0 && cube.position.x <= -canvasWidth/2) cubeV.x *= -1;
+  // if (cubeV.y > 0 && cube.position.y >= canvasHeight/2) cubeV.y *= -1;
+  // if (cubeV.y < 0 && cube.position.y <= -canvasHeight/2) cubeV.y *= -1;
+  // if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
+  // if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
 };
 
 /*

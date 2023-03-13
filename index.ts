@@ -165,5 +165,12 @@ For example, Polys stage themselves.
 Renderable objects contain a Position, Rotation, and draw(Camera).
 When renderQueue.render(Camera) is called, it calls draw(Camera) on every renderable
 (in order of descending distance from camera center)
+*/
 
+/*
+TODO:
+Fix/remove remnants of old PositionalObject and Renderable system
+Add camera dependent position conversion API
+Implement it
+Implement size component for Poly, Shape (base on ratio of distance to points)
 */

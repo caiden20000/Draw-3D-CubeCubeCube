@@ -53,6 +53,9 @@ let splashText: string[] = [
   'INTENTIONALLY LEFT BLANK',
   '!! SPIN FASTER !!',
   'Direct Access!',
+  'it\'s_a_snake!',
+  'it\'sACamel!',
+  'Runs quiet!'
 ];
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 
@@ -107,6 +110,7 @@ if (stepThrough) {
   interval = setInterval(() => frame(), 1000 / fps);
 }
 let step = 0;
+let cubeV = {x: 10, y: 9, z: 8};
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
@@ -151,6 +155,14 @@ var frame = () => {
   q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
+
+  cube.position.translate(cubeV.x, cubeV.y, cubeV.z);
+  if (cubeV.x > 0 && cube.position.x >= canvasWidth/2) cubeV.x *= -1;
+  if (cubeV.x < 0 && cube.position.x <= -canvasWidth/2) cubeV.x *= -1;
+  if (cubeV.y > 0 && cube.position.y >= canvasHeight/2) cubeV.y *= -1;
+  if (cubeV.y < 0 && cube.position.y <= -canvasHeight/2) cubeV.y *= -1;
+  if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
+  if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
 };
 
 /*

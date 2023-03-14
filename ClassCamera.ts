@@ -1,8 +1,8 @@
 import { Angle } from './ClassAngle';
 import { Canvas } from './ClassCanvas';
 import { Frustum } from './ClassFrustum';
-import { Point } from './ClassPoint';
 import { Position, Rotation } from './Components';
+import { Axis } from './EnumAxis';
 
 export { Camera };
 
@@ -33,8 +33,9 @@ class Camera {
 
   toCameraSpace(pos: Position): Position {
     // TODO
-    let clone = pos.clone();
-    return clone.translate(-this.position.x, this.position.y, -this.position.z);
+    let cSpace = pos.clone();
+    cSpace.translate(-this.position.x, this.position.y, -this.position.z);
+    return cSpace;
   }
 
   fromCameraSpaceToScreenSpace(pos: Position): Position {

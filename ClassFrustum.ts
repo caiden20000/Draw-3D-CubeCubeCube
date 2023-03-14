@@ -35,6 +35,9 @@ class Frustum {
     return new Vector(this.xDom + dx, this.yDom + dy, z);
   }
 
+  // TODO: OPTIMIZATION IDEA
+  // domain at any Z is an expansion factor * z * domain at z=0
+  // Just store the expansion factor.
   projectPosition(p: Position): Position {
     let pDom = this.getDomAtZ(p.z);
     //console.log(pDom);

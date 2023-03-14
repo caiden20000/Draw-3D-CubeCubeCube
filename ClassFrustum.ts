@@ -8,6 +8,8 @@ export { Frustum };
 class Frustum {
   public xDom: number;
   public yDom: number;
+  public xScalingFactor: number;
+  public yScalingFactor: number;
   constructor(
     public width: number,
     public height: number,
@@ -16,19 +18,25 @@ class Frustum {
   ) {
     this.xDom = width / 2;
     this.yDom = height / 2;
+    this.updateScalingFactors();
   }
 
-  // Returns a vector pointing to the corner fo the first quadrant of
-  // the finite plane bounded by the frustum angled planes
-  // ie. the X and Y components are 1/2 width and height of face at that Z value
+  // Used to have these calls in getDomAtZ.
+  // Probably sped things up caching these values.
+  // Not like they ever change anyway, 'cept FOV stuff
+  updateScalingFactors() {
+    this.xScalingFactor =
+      Math.sin(this.alpha.radians) /
+      Math.sin(Angle.Deg90().difference(this.alpha).radians);
+    this.yScalingFactor =
+      Math.sin(this.beta.radians) /
+      Math.sin(Angle.Deg90().difference(this.beta).radians);
+  }
+
   getDomAtZ(z: number): Vector {
     if (z < 0) return new Vector(0, 0, z);
-    let dx =
-      (z * Math.sin(this.alpha.radians)) /
-      Math.sin(Angle.Deg90().difference(this.alpha).radians);
-    let dy =
-      (z * Math.sin(this.beta.radians)) /
-      Math.sin(Angle.Deg90().difference(this.beta).radians);
+    let dx = z * this.xScalingFactor;
+    let dy = z * this.yScalingFactor;
     //console.log(dx);
     if (isNaN(dx) || !isFinite(dx)) dx = 0;
     if (isNaN(dy) || !isFinite(dy)) dy = 0;

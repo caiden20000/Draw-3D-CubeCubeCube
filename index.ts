@@ -56,6 +56,9 @@ let splashText: string[] = [
   "it's_a_snake!",
   "it'sACamel!",
   'Runs quiet!',
+  'Bloody legend!',
+  'Absolute lad!',
+  'It\\\'s a bug!'
 ];
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 

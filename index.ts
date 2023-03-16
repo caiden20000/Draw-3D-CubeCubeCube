@@ -65,8 +65,18 @@ appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 // ----- ----- Tools ----- ----- //
 
 let prevTime = Date.now();
-function relativeSpeed() {
-  
+let newTime = Date.now();
+// Returns a scaled value based on the frame timing.
+// eg. if you'll add "5" to somethings position in normally 30 fps,
+// your altered value is relativeSpeed(5, 30);
+// This is good for requestAnimationFrame(), not knowing the actual frame speed.
+function relativeSpeed(
+  value: number,
+  referenceMilliseconds: number = 1000
+): number {
+  let deltaMilliseconds = newTime - prevTime;
+  let scalingFactor = referenceMilliseconds / deltaMilliseconds;
+  return value * scalingFactor;
 }
 
 // ----- ----- Canvas ----- ----- //
@@ -110,6 +120,8 @@ let cubeV = { x: 10, y: 9, z: 8 };
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
+  prevTime = newTime;
+  newTime = Date.now();
 
   // // Draw quad
   // q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));

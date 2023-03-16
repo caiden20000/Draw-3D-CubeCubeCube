@@ -72,12 +72,17 @@ let newTime = Date.now();
 // This is good for requestAnimationFrame(), not knowing the actual frame speed.
 function relativeSpeed(
   value: number,
-  referenceMilliseconds: number = 1000
+  referenceMilliseconds: number = 10
 ): number {
   let deltaMilliseconds = newTime - prevTime;
   let scalingFactor = referenceMilliseconds / deltaMilliseconds;
   return value * scalingFactor;
 }
+// Shorthand
+var rs = relativeSpeed;
+// Note: Doesn't work? lol
+// Don't use haha
+// :( lol haha heheheeeh D:
 
 // ----- ----- Canvas ----- ----- //
 const canvasWidth = 400;
@@ -166,7 +171,7 @@ var frame = () => {
   if (cubeV.x > 0 && cube.position.x >= canvasWidth / 2) cubeV.x *= -1;
   if (cubeV.x < 0 && cube.position.x <= -canvasWidth / 2) cubeV.x *= -1;
   if (cubeV.y > 0 && cube.position.y >= canvasHeight / 2) cubeV.y *= -1;
-  if (cubeV.y < 0 && cube.position.y <= -canvasHeight / 2) cubeV.y *= -1.08;
+  if (cubeV.y < 0 && cube.position.y <= -canvasHeight / 2) cubeV.y *= -1.1;
   if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
   if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
   cubeV.y += -1;

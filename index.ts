@@ -58,11 +58,18 @@ let splashText: string[] = [
   'Runs quiet!',
   'Bloody legend!',
   'Absolute lad!',
-  'It\\\'s a bug!'
+  "It\\'s a bug!",
 ];
 appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
 
-// // // // // Canvas // // // // //
+// ----- ----- Tools ----- ----- //
+
+let prevTime = Date.now();
+function relativeSpeed() {
+  
+}
+
+// ----- ----- Canvas ----- ----- //
 const canvasWidth = 400;
 const canvasHeight = 400;
 
@@ -72,14 +79,7 @@ canvasElement.width = canvasWidth;
 canvasElement.height = canvasHeight;
 appDiv.appendChild(canvasElement);
 
-// // // // // Tools // // // // //
-
-const ctx = canvasElement.getContext('2d');
-
-// 6-sided shape with conjoined equilateral faces
-// like, uh, a dice
-
-// Test driving code //
+// ----- ----- Instantiating Objects ----- ----- //
 let canvas = new Canvas(canvasElement);
 canvas.setBackgroundColor(new Color(0, 0, 0));
 let camera = new Camera(canvas, Angle.fromDegrees(45));
@@ -91,7 +91,8 @@ cube.style.setColor(Color.BLUE);
 cube.updateColor();
 
 var renderQueue = new RenderQueue();
-var fps = 30; // todo changie after fixie
+
+// ----- ----- Interaction Handling ----- ----- //
 
 let pressBuffer = {};
 document.getElementsByTagName('html')[0].onkeydown = (e) => {
@@ -102,25 +103,15 @@ document.getElementsByTagName('html')[0].onkeyup = (e) => {
 };
 var walkSpeed = 10;
 var turnSpeed = 5;
-
-var interval;
-var stepThrough = false;
-if (stepThrough) {
-  document.onkeydown = (e: KeyboardEvent) => {
-    if (e.key == ' ') frame();
-  };
-} else {
-  interval = setInterval(() => frame(), 1000 / fps);
-}
-let step = 0;
 let cubeV = { x: 10, y: 9, z: 8 };
+
+// ----- ----- Frame Animation ----- ----- //
+
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
 
-  // run key functions
-
-  // Draw quad
+  // // Draw quad
   // q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
   // renderQueue.addStageable(q);
 
@@ -128,13 +119,16 @@ var frame = () => {
   cube.lightNormal(new Vector(1, 2, -2), 0.9);
   renderQueue.addStageable(cube);
 
+  // // Draw all cube face normals
   // renderQueue.addStageable(DrawableVector.asNormal(q));
   // for (let p of cube.polys)
   //   renderQueue.addStageable(DrawableVector.asNormal(p));
 
-  // Renders all objects in a certain order
+  // Stage all stageables
+  // This puts everything we're about to render into the render queue.
   renderQueue.stage();
 
+  // Key handling
   if (pressBuffer['q'])
     camera.rotation.rotate(Axis.Y, Angle.fromDegrees(turnSpeed));
   if (pressBuffer['e'])
@@ -143,26 +137,46 @@ var frame = () => {
   if (pressBuffer['a']) camera.position.translate(-walkSpeed, 0, 0);
   if (pressBuffer['s']) camera.position.translate(0, 0, -walkSpeed);
   if (pressBuffer['w']) camera.position.translate(0, 0, walkSpeed);
-  if (pressBuffer['p']) clearInterval(interval);
+  if (pressBuffer['p']) STOP = true;
   // Draw quad's normal vector (in default coloring)
   // Must draw after rotation/translation otherwise optical lagging occurs
   // q.drawNormal(renderQueue);
   renderQueue.render(camera);
 
   // Code that will modify the positon, rotation, scale, etc of objects:
-  //console.log(q.points[0].position.z);
-  q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
+  // Rotating objects
+  // q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 
-  // cube.position.translate(cubeV.x, cubeV.y, cubeV.z);
-  // if (cubeV.x > 0 && cube.position.x >= canvasWidth/2) cubeV.x *= -1;
-  // if (cubeV.x < 0 && cube.position.x <= -canvasWidth/2) cubeV.x *= -1;
-  // if (cubeV.y > 0 && cube.position.y >= canvasHeight/2) cubeV.y *= -1;
-  // if (cubeV.y < 0 && cube.position.y <= -canvasHeight/2) cubeV.y *= -1;
-  // if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
-  // if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
+  // Bouncy cube!
+  cube.position.translate(cubeV.x, cubeV.y, cubeV.z);
+  if (cubeV.x > 0 && cube.position.x >= canvasWidth / 2) cubeV.x *= -1;
+  if (cubeV.x < 0 && cube.position.x <= -canvasWidth / 2) cubeV.x *= -1;
+  if (cubeV.y > 0 && cube.position.y >= canvasHeight / 2) cubeV.y *= -1;
+  if (cubeV.y < 0 && cube.position.y <= -canvasHeight / 2) cubeV.y *= -1.08;
+  if (cubeV.z > 0 && cube.position.z >= 450) cubeV.z *= -1;
+  if (cubeV.z < 0 && cube.position.z <= 150) cubeV.z *= -1;
+  cubeV.y += -1;
+
+  // Loop frame
+  if (!STOP) requestAnimationFrame(frame);
 };
+
+// ----- ----- Animation Handling ----- ----- //
+
+// If stepThrough = true, use spacebar to advance frames.
+var stepThrough = false;
+let STOP = false;
+if (stepThrough) {
+  STOP = true;
+  document.onkeydown = (e: KeyboardEvent) => {
+    if (e.key == ' ') frame();
+  };
+} else {
+  STOP = false;
+  frame();
+}
 
 /*
 Current model:
@@ -180,8 +194,7 @@ When renderQueue.render(Camera) is called, it calls draw(Camera) on every render
 
 /*
 TODO:
-Fix/remove remnants of old PositionalObject and Renderable system
-Add camera dependent position conversion API
-Implement it
+Implement quaternion rotation.
+Implement Camera rotation cameraSpace
 Implement size component for Poly, Shape (base on ratio of distance to points)
 */

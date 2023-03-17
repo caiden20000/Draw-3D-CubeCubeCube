@@ -122,6 +122,8 @@ let cubeV = { x: 10, y: 9, z: 8 };
 
 // ----- ----- Frame Animation ----- ----- //
 
+var fps = 30;
+
 var frame = () => {
   // Reset canvas for new frame
   camera.canvas.clear();
@@ -177,7 +179,9 @@ var frame = () => {
   cubeV.y += -1;
 
   // Loop frame
-  if (!STOP) requestAnimationFrame(frame);
+  setTimeout(() => {
+    if (!STOP) requestAnimationFrame(frame);
+  }, 1000/fps);
 };
 
 // ----- ----- Animation Handling ----- ----- //

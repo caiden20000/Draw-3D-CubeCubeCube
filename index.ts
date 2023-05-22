@@ -60,7 +60,15 @@ let splashText: string[] = [
   'Absolute lad!',
   "It\\'s a bug!",
 ];
-appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
+let businessSplashText: string[] = [
+  'This is professional.',
+  'I have coded this.',
+  'Skills were gained from this one.',
+  'Code goes in, experience comes out.',
+  'I hope this reflects positively on my character.',
+];
+//appDiv.innerHTML = `<h1>${r_li<string>(splashText)}</h1>`;
+appDiv.innerHTML = `<h1>${r_li<string>(businessSplashText)}</h1>`;
 
 // ----- ----- Tools ----- ----- //
 
@@ -131,17 +139,17 @@ var frame = () => {
   newTime = Date.now();
 
   // // Draw quad
-  // q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
-  // renderQueue.addStageable(q);
+  q.style.setColor(Color.RED.lightParallel(Vector.PositiveY, q.getNormal(), 1));
+  renderQueue.addStageable(q);
 
   // Draw cube, shaded by how parallel normal is to vector
   cube.lightNormal(new Vector(1, 2, -2), 0.9);
   renderQueue.addStageable(cube);
 
   // // Draw all cube face normals
-  // renderQueue.addStageable(DrawableVector.asNormal(q));
-  // for (let p of cube.polys)
-  //   renderQueue.addStageable(DrawableVector.asNormal(p));
+  renderQueue.addStageable(DrawableVector.asNormal(q));
+  for (let p of cube.polys)
+    renderQueue.addStageable(DrawableVector.asNormal(p));
 
   // Stage all stageables
   // This puts everything we're about to render into the render queue.
@@ -164,7 +172,7 @@ var frame = () => {
 
   // Code that will modify the positon, rotation, scale, etc of objects:
   // Rotating objects
-  // q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
+  q.rotation.rotate(Axis.X, Angle.fromDegrees(10), new Position(75, 75, 250));
   cube.rotation.rotate(Axis.Y, Angle.fromDegrees(5));
   cube.rotation.rotate(Axis.Z, Angle.fromDegrees(3));
 
@@ -181,7 +189,7 @@ var frame = () => {
   // Loop frame
   setTimeout(() => {
     if (!STOP) requestAnimationFrame(frame);
-  }, 1000/fps);
+  }, 1000 / fps);
 };
 
 // ----- ----- Animation Handling ----- ----- //
